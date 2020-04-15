@@ -18,6 +18,7 @@ type stmt =
   | Expr of expr
   | If of expr * stmt * stmt
   | While of expr * stmt
+  | For of expr * expr * stmt
   (* return *)
   | Return of expr
 
