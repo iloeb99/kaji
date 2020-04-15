@@ -7,6 +7,7 @@ let letter = ['a'-'z' 'A'-'Z']
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
+| "//"     { singlecomment lexbuf }
 | "/*"     { comment lexbuf }           (* Comments *)
 | '('      { LPAREN }
 | ')'      { RPAREN }
@@ -23,13 +24,18 @@ rule token = parse
 | '<'      { LT }
 | "&&"     { AND }
 | "||"     { OR }
+| "in"     { IN }
 | "if"     { IF }
 | "else"   { ELSE }
 | "while"  { WHILE }
+| "for"    { FOR }
 (* RETURN *)
 | "return" { RETURN }
 | "int"    { INT }
 | "bool"   { BOOL }
+| "void"   { VOID }
+| "var"    { VARIABLE }
+| "func"   { FUNCTION }
 | "true"   { BLIT(true)  }
 | "false"  { BLIT(false) }
 | digit+ as lem  { LITERAL(int_of_string lem) }
@@ -40,3 +46,7 @@ rule token = parse
 and comment = parse
   "*/" { token lexbuf }
 | _    { comment lexbuf }
+
+rule singlecomment = parse
+  '\n' { token lexbuf }
+| _    { singlecomment lexbuf }

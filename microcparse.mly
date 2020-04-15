@@ -1,12 +1,12 @@
-/* Ocamlyacc parser for MicroC */
+/* Ocamlyacc parser for Kaji */
 
 %{
 open Ast
 %}
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE PLUS MINUS ASSIGN
-%token EQ NEQ LT AND OR
-%token IF ELSE WHILE INT BOOL
+%token EQ NEQ LT AND OR IN
+%token IF ELSE WHILE FOR INT BOOL VOID VARIABLE FUNCTION
 /* return, COMMA token */
 %token RETURN COMMA
 %token <int> LITERAL
@@ -49,7 +49,7 @@ typ:
 
 /* fdecl */
 fdecl:
-  vdecl LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+  FUNCTION vdecl LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
   {
     {
       rtyp=fst $1;
