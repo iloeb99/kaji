@@ -12,6 +12,8 @@ open Ast
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID
+%token <None> VOIDLIT
+/* Need to add variable literal */
 %token EOF
 
 %start program
@@ -46,17 +48,19 @@ vdecl:
 typ:
     INT   { Int   }
   | BOOL  { Bool  }
+  | VOID  { Void  }
+  | VARIABLE { Variable }
 
 /* fdecl */
 fdecl:
   FUNCTION vdecl LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
   {
     {
-      rtyp=fst $1;
-      fname=snd $1;
-      formals=$3;
-      locals=$6;
-      body=$7
+      rtyp=fst $2;
+      fname=snd $2;
+      formals=$4;
+      locals=$7;
+      body=$8
     }
   }
 
@@ -88,6 +92,8 @@ expr:
     LITERAL          { Literal($1)            }
   | BLIT             { BoolLit($1)            }
   | ID               { Id($1)                 }
+  | VOIDLIT          { VoidLit($1)            }
+  /* Need to incorporate variable literal */
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
   | expr EQ     expr { Binop($1, Equal, $3)   }

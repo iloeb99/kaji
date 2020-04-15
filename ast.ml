@@ -2,12 +2,14 @@
 
 type op = Add | Sub | Equal | Neq | Less | And | Or
 
-type typ = Int | Bool
+type typ = Int | Bool | Void | Variable
 
 type expr =
     Literal of int
   | BoolLit of bool
   | Id of string
+  | VoidLit of None
+  (* need to add variable lit *)
   | Binop of expr * op * expr
   | Assign of string * expr
   (* function call *)

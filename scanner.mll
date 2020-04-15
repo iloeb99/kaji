@@ -40,6 +40,7 @@ rule token = parse
 | "false"  { BLIT(false) }
 | digit+ as lem  { LITERAL(int_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
+| "None"   { VOIDLIT(None) }
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
