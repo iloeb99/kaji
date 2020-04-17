@@ -22,6 +22,7 @@ rule token = parse
 | "=="     { EQ }
 | "!="     { NEQ }
 | '<'      { LT }
+| '>'      { GT }
 | "&&"     { AND }
 | "||"     { OR }
 | "in"     { IN }
@@ -36,6 +37,10 @@ rule token = parse
 | "void"   { VOID }
 | "var"    { VARIABLE }
 | "func"   { FUNCTION }
+| "url"    { URL }
+| "tag"    { TAG }
+| "list"   { LIST }
+| "str"    { STR }
 | "true"   { BLIT(true)  }
 | "false"  { BLIT(false) }
 | digit+ as lem  { LITERAL(int_of_string lem) }
