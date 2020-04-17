@@ -5,15 +5,15 @@ open Ast
 %}
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE PLUS MINUS ASSIGN
-%token EQ NEQ LT AND OR IN
-%token IF ELSE WHILE FOR INT BOOL VOID VARIABLE FUNCTION
+%token EQ NEQ LT GT AND OR IN
+%token IF ELSE WHILE FOR INT BOOL VOID FUNCTION STR
 /* return, COMMA token */
 %token RETURN COMMA
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID
-%token <None> VOIDLIT
-/* Need to add variable literal */
+/*%token <list> LISTLIT */
+%token <string> STRLIT
 %token EOF
 
 %start program
@@ -49,7 +49,8 @@ typ:
     INT   { Int   }
   | BOOL  { Bool  }
   | VOID  { Void  }
-  | VARIABLE { Variable }
+/*  | LIST LT typ GT { List } */
+  | STR   { Str }
 
 /* fdecl */
 fdecl:
@@ -92,7 +93,8 @@ expr:
     LITERAL          { Literal($1)            }
   | BLIT             { BoolLit($1)            }
   | ID               { Id($1)                 }
-  | VOIDLIT          { VoidLit($1)            }
+/*  | LISTLIT          { ListLit($1)            } */
+  | STRLIT           { StrLit($1)             }
   /* Need to incorporate variable literal */
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }

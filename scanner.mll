@@ -35,17 +35,14 @@ rule token = parse
 | "int"    { INT }
 | "bool"   { BOOL }
 | "void"   { VOID }
-| "var"    { VARIABLE }
 | "func"   { FUNCTION }
-| "url"    { URL }
-| "tag"    { TAG }
-| "list"   { LIST }
+(*| "list"   { LIST } *)
 | "str"    { STR }
 | "true"   { BLIT(true)  }
 | "false"  { BLIT(false) }
 | digit+ as lem  { LITERAL(int_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
-| "None"   { VOIDLIT(None) }
+| '"'(_)*'"' as lem { STRLIT(lem) }
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
@@ -53,6 +50,6 @@ and comment = parse
   "*/" { token lexbuf }
 | _    { comment lexbuf }
 
-rule singlecomment = parse
+and singlecomment = parse
   '\n' { token lexbuf }
 | _    { singlecomment lexbuf }
