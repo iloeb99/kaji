@@ -4,15 +4,14 @@
 open Ast
 %}
 
-%token SEMI LPAREN RPAREN LBRACE RBRACE PLUS MINUS ASSIGN
+%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK PLUS MINUS ASSIGN
 %token EQ NEQ LT GT AND OR IN
-%token IF ELSE WHILE FOR INT BOOL VOID FUNCTION STR
+%token IF ELSE WHILE FOR INT BOOL VOID FUNCTION STR LIST
 /* return, COMMA token */
 %token RETURN COMMA
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID
-/*%token <list> LISTLIT */
 %token <string> STRLIT
 %token EOF
 
@@ -49,7 +48,7 @@ typ:
     INT   { Int   }
   | BOOL  { Bool  }
   | VOID  { Void  }
-/*  | LIST LT typ GT { List } */
+  | LIST LT typ GT { List }
   | STR   { Str }
 
 /* fdecl */
@@ -93,8 +92,8 @@ expr:
     LITERAL          { Literal($1)            }
   | BLIT             { BoolLit($1)            }
   | ID               { Id($1)                 }
-/*  | LISTLIT          { ListLit($1)            } */
   | STRLIT           { StrLit($1)             }
+  | LBRACK args_opt RBRACK { ListLit($2)      }
   /* Need to incorporate variable literal */
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }

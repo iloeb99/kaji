@@ -2,14 +2,14 @@
 
 type op = Add | Sub | Equal | Neq | Less | And | Or
 
-type typ = Int | Bool | Void | Str
+type typ = Int | Bool | Void | Str | List
 
 type expr =
     Literal of int
   | BoolLit of bool
   | Id of string
-  (* need to add variable lit *)
   | StrLit of string
+  | ListLit of expr list
   | Binop of expr * op * expr
   | Assign of string * expr
   (* function call *)
@@ -54,6 +54,7 @@ let rec string_of_expr = function
   | BoolLit(false) -> "false"
   | Id(s) -> s
   | StrLit(s) -> s
+  | ListLit(li) -> "<string of list>"
   | Binop(e1, o, e2) ->
     string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
@@ -75,6 +76,7 @@ let string_of_typ = function
   | Bool -> "bool"
   | Void -> "void"
   | Str -> "str"
+  | List -> "list"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 

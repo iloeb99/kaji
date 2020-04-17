@@ -13,6 +13,8 @@ rule token = parse
 | ')'      { RPAREN }
 | '{'      { LBRACE }
 | '}'      { RBRACE }
+| '['      { LBRACK }
+| ']'      { RBRACK }
 | ';'      { SEMI }
 (* COMMA *)
 | ','      { COMMA }
@@ -36,7 +38,7 @@ rule token = parse
 | "bool"   { BOOL }
 | "void"   { VOID }
 | "func"   { FUNCTION }
-(*| "list"   { LIST } *)
+| "list"   { LIST }
 | "str"    { STR }
 | "true"   { BLIT(true)  }
 | "false"  { BLIT(false) }
