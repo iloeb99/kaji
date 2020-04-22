@@ -22,7 +22,7 @@ open Ast
 %left OR
 %left AND
 %left EQ NEQ
-%left LT
+%left LT GT
 %left PLUS MINUS
 
 %%
@@ -100,6 +100,7 @@ expr:
   | expr EQ     expr { Binop($1, Equal, $3)   }
   | expr NEQ    expr { Binop($1, Neq, $3)     }
   | expr LT     expr { Binop($1, Less,  $3)   }
+  | expr GT     expr { Binop($1, Great, $3)   }
   | expr AND    expr { Binop($1, And,   $3)   }
   | expr OR     expr { Binop($1, Or,    $3)   }
   | ID ASSIGN expr   { Assign($1, $3)         }
