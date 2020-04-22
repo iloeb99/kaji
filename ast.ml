@@ -2,7 +2,7 @@
 
 type op = Add | Sub | Equal | Neq | Less | Great | And | Or
 
-type typ = Int | Bool | Void | Str | List
+type typ = Int | Bool | Void | Str | List of typ
 
 type expr =
     Literal of int
@@ -77,7 +77,7 @@ let string_of_typ = function
   | Bool -> "bool"
   | Void -> "void"
   | Str -> "str"
-  | List -> "list"
+  | List(_) -> "list"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 

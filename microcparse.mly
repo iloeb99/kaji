@@ -48,7 +48,7 @@ typ:
     INT   { Int   }
   | BOOL  { Bool  }
   | VOID  { Void  }
-  | LIST LT typ GT { List }
+  | LIST LT typ GT { List($3) }
   | STR   { Str }
 
 /* fdecl */
