@@ -7,6 +7,8 @@ and sx =
     SLiteral of int
   | SBoolLit of bool
   | SId of string
+  | SStrLit of string
+  | SListLit of sexpr list
   | SBinop of sexpr * op * sexpr
   | SAssign of string * sexpr
   (* call *)
@@ -17,6 +19,7 @@ type sstmt =
   | SExpr of sexpr
   | SIf of sexpr * sstmt * sstmt
   | SWhile of sexpr * sstmt
+  | SFor of bind * sexpr * sstmt
   (* return *)
   | SReturn of sexpr
 
@@ -40,6 +43,8 @@ let rec string_of_sexpr (t, e) =
       | SBoolLit(true) -> "true"
       | SBoolLit(false) -> "false"
       | SId(s) -> s
+      | SStrLit(s) -> s
+      | SListLit(li) -> "<string of list>"
       | SBinop(e1, o, e2) ->
         string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
       | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
@@ -55,6 +60,7 @@ let rec string_of_sstmt = function
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^
                        string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
+  | SFor((a,b), e2, s) -> "for " ^ b ^ " in " ^ string_of_sexpr e2 ^ " " ^ string_of_sstmt s
 
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.srtyp ^ " " ^

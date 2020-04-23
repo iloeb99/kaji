@@ -25,6 +25,7 @@ let check (globals, functions) =
   (* Make sure no globals duplicate *)
   check_binds "global" globals;
 
+  (* TODO: ADD BUILT-IN FUNCS *)
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     StringMap.add "print" {
@@ -66,7 +67,9 @@ let check (globals, functions) =
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
     let check_assign lvaluet rvaluet err =
-      if lvaluet = rvaluet then lvaluet else raise (Failure err)
+      match lvaluet with
+        List(_) -> if rvaluet = List(Void) || lvaluet = rvaluet then lvaluet else raise (Failure err)
+        | _ -> if lvaluet = rvaluet then lvaluet else raise (Failure err)
     in
 
     (* Build local symbol table of variables for this function *)
@@ -84,6 +87,18 @@ let check (globals, functions) =
     let rec check_expr = function
         Literal l -> (Int, SLiteral l)
       | BoolLit l -> (Bool, SBoolLit l)
+      | StrLit l -> (Str, SStrLit l)
+      | ListLit l ->
+        let rec check = function
+          (t1, _) :: (t2, e2) :: tail ->
+            if t1 = t2 then
+              check ((t2, e2)::tail)
+            else raise (Failure "list contains inconsistent types")
+          | (t, _) :: tail -> List(t)
+          | _ -> List(Void)
+        in
+        let sl = List.map check_expr l in (check sl, SListLit sl)
+
       | Id var -> (type_of_identifier var, SId var)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var
@@ -106,7 +121,7 @@ let check (globals, functions) =
           let t = match op with
               Add | Sub when t1 = Int -> Int
             | Equal | Neq -> Bool
-            | Less when t1 = Int -> Bool
+            | Less | Great when t1 = Int -> Bool
             | And | Or when t1 = Bool -> Bool
             | _ -> raise (Failure err)
           in
@@ -149,6 +164,13 @@ let check (globals, functions) =
         SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
       | While(e, st) ->
         SWhile(check_bool_expr e, check_stmt st)
+      | For((t, n), e, st) ->
+          let se = check_expr e in
+          let v = match se with
+            (List(Void), _) -> SFor((t,n), se, check_stmt st)
+            | (List(t'), _) -> if t = t' then SFor((t,n), se, check_stmt st) else raise(Failure "list type does not match iterator type")
+            | _ -> raise(Failure "cannot iterate through non-list type")
+          in v
       | Return e ->
         let (t, e') = check_expr e in
         if t = func.rtyp then SReturn (t, e')

@@ -1,5 +1,7 @@
 (* Abstract Syntax Tree and functions for printing it *)
 
+(* TODO: ADD SUPPORT FOR INDEXING LISTS AND STRINGS *)
+
 type op = Add | Sub | Equal | Neq | Less | Great | And | Or
 
 type typ = Int | Bool | Void | Str | List of typ
@@ -15,17 +17,17 @@ type expr =
   (* function call *)
   | Call of string * expr list
 
+(* int x: name binding *)
+type bind = typ * string  
+
 type stmt =
     Block of stmt list
   | Expr of expr
   | If of expr * stmt * stmt
   | While of expr * stmt
-  | For of expr * expr * stmt
+  | For of bind * expr * stmt
   (* return *)
   | Return of expr
-
-(* int x: name binding *)
-type bind = typ * string
 
 (* func_def: ret_typ fname formals locals body *)
 type func_def = {
@@ -70,7 +72,7 @@ let rec string_of_stmt = function
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
                       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  | For(e1, e2, s) -> "for " ^ string_of_expr e1 ^ " in " ^ string_of_expr e2 ^ " " ^ string_of_stmt s
+  | For((t, a), e2, s) -> "for " ^ a ^ " in " ^ string_of_expr e2 ^ " " ^ string_of_stmt s
 
 let string_of_typ = function
     Int -> "int"
