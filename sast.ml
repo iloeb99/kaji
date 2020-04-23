@@ -11,7 +11,6 @@ and sx =
   | SListLit of sexpr list
   | SBinop of sexpr * op * sexpr
   | SAssign of string * sexpr
-  (* call *)
   | SCall of string * sexpr list
 
 type sstmt =
@@ -20,7 +19,6 @@ type sstmt =
   | SIf of sexpr * sstmt * sstmt
   | SWhile of sexpr * sstmt
   | SFor of bind * sexpr * sstmt
-  (* return *)
   | SReturn of sexpr
 
 (* func_def: ret_typ fname formals locals body *)
@@ -44,7 +42,7 @@ let rec string_of_sexpr (t, e) =
       | SBoolLit(false) -> "false"
       | SId(s) -> s
       | SStrLit(s) -> s
-      | SListLit(li) -> "<string of list>"
+      | SListLit(li) -> (List.fold_left (fun acc item -> acc ^ (string_of_sexpr item) ^ ",") "[" li) ^ "]"
       | SBinop(e1, o, e2) ->
         string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
       | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e

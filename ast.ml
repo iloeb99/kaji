@@ -57,7 +57,7 @@ let rec string_of_expr = function
   | BoolLit(false) -> "false"
   | Id(s) -> s
   | StrLit(s) -> s
-  | ListLit(li) -> "<string of list>"
+  | ListLit(li) -> (List.fold_left (fun acc item -> acc ^ (string_of_expr item) ^ ",") "[" li) ^ "]"
   | Binop(e1, o, e2) ->
     string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
@@ -74,12 +74,12 @@ let rec string_of_stmt = function
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   | For((t, a), e2, s) -> "for " ^ a ^ " in " ^ string_of_expr e2 ^ " " ^ string_of_stmt s
 
-let string_of_typ = function
+let rec string_of_typ = function
     Int -> "int"
   | Bool -> "bool"
   | Void -> "void"
   | Str -> "str"
-  | List(_) -> "list"
+  | List(t) -> "List<" ^ string_of_typ t ^ ">"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
