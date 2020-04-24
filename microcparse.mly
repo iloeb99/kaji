@@ -32,24 +32,24 @@ program:
   decls EOF { $1}
 
 decls:
-   /* nothing */ { ([], [])               }
+   /* nothing */    { ([], [])                 }
  | vdecl SEMI decls { (($1 :: fst $3), snd $3) }
- | fdecl decls { (fst $2, ($1 :: snd $2)) }
+ | fdecl decls      { (fst $2, ($1 :: snd $2)) }
 
 vdecl_list:
-  /*nothing*/ { [] }
-  | vdecl SEMI vdecl_list  {  $1 :: $3 }
+    /*nothing*/            { []       }
+  | vdecl SEMI vdecl_list  { $1 :: $3 }
 
 /* int x */
 vdecl:
   typ ID { ($1, $2) }
 
 typ:
-    INT   { Int   }
-  | BOOL  { Bool  }
-  | VOID  { Void  }
+    INT            { Int      }
+  | BOOL           { Bool     }
+  | VOID           { Void     }
   | LIST LT typ GT { List($3) }
-  | STR   { Str }
+  | STR            { Str      }
 
 /* fdecl */
 fdecl:
@@ -66,53 +66,51 @@ fdecl:
 
 /* formals_opt */
 formals_opt:
-  /*nothing*/ { [] }
+    /*nothing*/  { [] }
   | formals_list { $1 }
 
 formals_list:
-  vdecl { [$1] }
+    vdecl                    { [$1]   }
   | vdecl COMMA formals_list { $1::$3 }
 
 stmt_list:
-  /* nothing */ { [] }
+    /* nothing */   { []     }
   | stmt stmt_list  { $1::$2 }
 
 stmt:
-    expr SEMI                               { Expr $1      }
-  | LBRACE stmt_list RBRACE                 { Block $2 }
+    expr SEMI                            { Expr $1          }
+  | LBRACE stmt_list RBRACE              { Block $2         }
   /* if (condition) { block1} else {block2} */
   /* if (condition) stmt else stmt */
-  | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
-  | WHILE LPAREN expr RPAREN stmt           { While ($3, $5)  }
-  | FOR vdecl IN expr stmt                   { For ($2, $4, $5) }
+  | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7)   }
+  | WHILE LPAREN expr RPAREN stmt        { While ($3, $5)   }
+  | FOR vdecl IN expr stmt               { For ($2, $4, $5) }
   /* return */
-  | RETURN expr SEMI                        { Return $2      }
+  | RETURN expr SEMI                     { Return $2        }
 
 expr:
-    LITERAL          { Literal($1)            }
-  | BLIT             { BoolLit($1)            }
-  | ID               { Id($1)                 }
-  | STRLIT           { StrLit($1)             }
-  | LBRACK args_opt RBRACK { ListLit($2)      }
-  /* Need to incorporate variable literal */
-  | expr PLUS   expr { Binop($1, Add,   $3)   }
-  | expr MINUS  expr { Binop($1, Sub,   $3)   }
-  | expr EQ     expr { Binop($1, Equal, $3)   }
-  | expr NEQ    expr { Binop($1, Neq, $3)     }
-  | expr LT     expr { Binop($1, Less,  $3)   }
-  | expr GT     expr { Binop($1, Great, $3)   }
-  | expr AND    expr { Binop($1, And,   $3)   }
-  | expr OR     expr { Binop($1, Or,    $3)   }
-  | ID ASSIGN expr   { Assign($1, $3)         }
-  | LPAREN expr RPAREN { $2                   }
-  /* call */
-  | ID LPAREN args_opt RPAREN { Call ($1, $3)  }
+    LITERAL                    { Literal($1)          }
+  | BLIT                       { BoolLit($1)          }
+  | ID                         { Id($1)               }
+  | STRLIT                     { StrLit($1)           }
+  | LBRACK args_opt RBRACK     { ListLit($2)          }
+  | expr PLUS   expr           { Binop($1, Add, $3)   }
+  | expr MINUS  expr           { Binop($1, Sub, $3)   }
+  | expr EQ     expr           { Binop($1, Equal, $3) }
+  | expr NEQ    expr           { Binop($1, Neq, $3)   }
+  | expr LT     expr           { Binop($1, Less, $3)  }
+  | expr GT     expr           { Binop($1, Great, $3) }
+  | expr AND    expr           { Binop($1, And, $3)   }
+  | expr OR     expr           { Binop($1, Or, $3)    }
+  | ID ASSIGN expr             { Assign($1, $3)       }
+  | LPAREN expr RPAREN         { $2                   }
+  | ID LPAREN args_opt RPAREN  { Call($1, $3)         }
 
 /* args_opt*/
 args_opt:
-  /*nothing*/ { [] }
-  | args { $1 }
+    /*nothing*/ { [] }
+  | args        { $1 }
 
 args:
-  expr  { [$1] }
+    expr            { [$1]   }
   | expr COMMA args { $1::$3 }
