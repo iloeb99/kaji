@@ -24,6 +24,7 @@ open Ast
 %left EQ NEQ
 %left LT GT
 %left PLUS MINUS
+%left LBRACK
 
 %%
 
@@ -102,6 +103,7 @@ expr:
   | expr GT     expr           { Binop($1, Great, $3) }
   | expr AND    expr           { Binop($1, And, $3)   }
   | expr OR     expr           { Binop($1, Or, $3)    }
+  | expr LBRACK LITERAL RBRACK { Index($1, $3)        }
   | ID ASSIGN expr             { Assign($1, $3)       }
   | LPAREN expr RPAREN         { $2                   }
   | ID LPAREN args_opt RPAREN  { Call($1, $3)         }

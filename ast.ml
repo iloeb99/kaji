@@ -13,6 +13,7 @@ type expr =
   | StrLit of string
   | ListLit of expr list
   | Binop of expr * op * expr
+  | Index of expr * int
   | Assign of string * expr
   (* function call *)
   | Call of string * expr list
@@ -61,8 +62,9 @@ let rec string_of_expr = function
   | Binop(e1, o, e2) ->
     string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | Index(e, i) -> string_of_expr e ^ "[" ^ string_of_int i ^ "]"
   | Call(f, el) ->
-      f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+    f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
 
 let rec string_of_stmt = function
     Block(stmts) ->
@@ -84,7 +86,7 @@ let rec string_of_typ = function
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
 let string_of_fdecl fdecl =
-  string_of_typ fdecl.rtyp ^ " " ^
+  "func " ^ string_of_typ fdecl.rtyp ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")\n{\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.locals) ^

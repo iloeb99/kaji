@@ -10,6 +10,7 @@ and sx =
   | SStrLit of string
   | SListLit of sexpr list
   | SBinop of sexpr * op * sexpr
+  | SIndex of sexpr * int
   | SAssign of string * sexpr
   | SCall of string * sexpr list
 
@@ -46,6 +47,7 @@ let rec string_of_sexpr (t, e) =
       | SBinop(e1, o, e2) ->
         string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
       | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
+      | SIndex(e, i) -> string_of_sexpr e ^ "[" ^ string_of_int i ^ "]"
       | SCall(f, el) ->
           f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
     ) ^ ")"

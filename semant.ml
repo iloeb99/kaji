@@ -100,6 +100,12 @@ let check (globals, functions) =
         let sl = List.map check_expr l in (check sl, SListLit sl)
 
       | Id var -> (type_of_identifier var, SId var)
+      | Index(e, i) ->
+        let (t, e') = check_expr e in
+        let st = match t with
+            List(t') -> t'
+          | _ -> raise (Failure ("cannot index non list type"))
+        in (st, SIndex((t, e'), i))
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var
         and (rt, e') = check_expr e in
