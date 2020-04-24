@@ -13,7 +13,7 @@ type expr =
   | StrLit of string
   | ListLit of expr list
   | Binop of expr * op * expr
-  | Index of expr * int
+  | Index of expr * expr
   | Assign of string * expr
   (* function call *)
   | Call of string * expr list
@@ -62,7 +62,7 @@ let rec string_of_expr = function
   | Binop(e1, o, e2) ->
     string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
-  | Index(e, i) -> string_of_expr e ^ "[" ^ string_of_int i ^ "]"
+  | Index(e, i) -> string_of_expr e ^ "[" ^ string_of_expr i ^ "]"
   | Call(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
 

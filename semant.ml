@@ -101,11 +101,15 @@ let check (globals, functions) =
 
       | Id var -> (type_of_identifier var, SId var)
       | Index(e, i) ->
-        let (t, e') = check_expr e in
-        let st = match t with
-            List(t') -> t'
-          | _ -> raise (Failure ("cannot index non list type"))
-        in (st, SIndex((t, e'), i))
+        let dex = check_expr i in
+        if fst dex <> Int then
+            raise (Failure "index must be of type Int")
+        else
+            let (t, e') = check_expr e in
+            let st = match t with
+                List(t') -> t'
+              | _ -> raise (Failure ("cannot index non list type"))
+            in (st, SIndex((t, e'), dex))
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var
         and (rt, e') = check_expr e in
