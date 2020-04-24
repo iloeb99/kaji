@@ -69,7 +69,7 @@ let check (globals, functions) =
     let check_assign lvaluet rvaluet err =
       match lvaluet with
         List(_) -> if rvaluet = List(Void) || lvaluet = rvaluet then lvaluet else raise (Failure err)
-        | _ -> if lvaluet = rvaluet then lvaluet else raise (Failure err)
+      | _ -> if lvaluet = rvaluet then lvaluet else raise (Failure err)
     in
 
     (* Build local symbol table of variables for this function *)
@@ -90,7 +90,7 @@ let check (globals, functions) =
       | StrLit l -> (Str, SStrLit l)
       | ListLit l ->
         let rec check = function
-          (t1, _) :: (t2, e2) :: tail ->
+            (t1, _) :: (t2, e2) :: tail ->
             if t1 = t2 then
               check ((t2, e2)::tail)
             else raise (Failure "list contains inconsistent types")
@@ -171,12 +171,12 @@ let check (globals, functions) =
       | While(e, st) ->
         SWhile(check_bool_expr e, check_stmt st)
       | For((t, n), e, st) ->
-          let se = check_expr e in
-          let v = match se with
+        let se = check_expr e in
+        let v = match se with
             (List(Void), _) -> SFor((t,n), se, check_stmt st)
-            | (List(t'), _) -> if t = t' then SFor((t,n), se, check_stmt st) else raise(Failure "list type does not match iterator type")
-            | _ -> raise(Failure "cannot iterate through non-list type")
-          in v
+          | (List(t'), _) -> if t = t' then SFor((t,n), se, check_stmt st) else raise(Failure "list type does not match iterator type")
+          | _ -> raise(Failure "cannot iterate through non-list type")
+        in v
       | Return e ->
         let (t, e') = check_expr e in
         if t = func.rtyp then SReturn (t, e')

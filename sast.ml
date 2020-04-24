@@ -49,7 +49,7 @@ let rec string_of_sexpr (t, e) =
       | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
       | SIndex(e, i) -> string_of_sexpr e ^ "[" ^ string_of_int i ^ "]"
       | SCall(f, el) ->
-          f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
+        f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
     ) ^ ")"
 
 let rec string_of_sstmt = function
