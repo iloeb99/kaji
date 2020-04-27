@@ -29,12 +29,15 @@ let translate (globals, functions) =
   (* Get types from the context *)
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context
-  and i1_t       = L.i1_type     context in
+  and i1_t       = L.i1_type     context 
+  and void_t     = L.void_type   context in
 
   (* Return the LLVM type for a MicroC type *)
   let ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
+    (*| A.Str   -> *)
+    | A.Void  -> void_t
   in
 
   (* Create a map of global variables after creating each *)
@@ -114,6 +117,7 @@ let translate (globals, functions) =
          | A.Neq     -> L.build_icmp L.Icmp.Ne
          | A.Less    -> L.build_icmp L.Icmp.Slt
         ) e1' e2' "tmp" builder
+      (*| SStrLit s -> *)
       | SCall ("print", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder e) |]
           "printf" builder
@@ -170,6 +174,14 @@ let translate (globals, functions) =
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         L.builder_at_end context end_bb
+      (*| SFor (var, li, body) ->
+        let for_bb = L.append_block context "for" the_function in
+        let build_br_for = L.build_br for_bb in (* partial function *)
+        ignore (build_br_for builder);
+        let for_builder = L.builder_at_end context for_bb in *)
+        
+
+
 
     in
     (* Build the code for each statement in the function *)
