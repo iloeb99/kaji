@@ -1,5 +1,5 @@
-; ModuleID = 'MicroC'
-source_filename = "MicroC"
+; ModuleID = 'Kaji'
+source_filename = "Kaji"
 
 @a = global i32 0
 @b = global i32 0

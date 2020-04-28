@@ -1,4 +1,4 @@
-/* The GCD algorithm in MicroC */
+/* The GCD algorithm in Kaji */
 int a;
 int b;
 

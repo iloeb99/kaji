@@ -1,6 +1,6 @@
-(* Ocamllex scanner for MicroC *)
+(* Ocamllex scanner for Kaji *)
 
-{ open Microcparse }
+{ open Kajiparse }
 
 let digit = ['0'-'9']
 let letter = ['a'-'z' 'A'-'Z']

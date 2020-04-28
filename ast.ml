@@ -1,7 +1,5 @@
 (* Abstract Syntax Tree and functions for printing it *)
 
-(* TODO: ADD SUPPORT FOR INDEXING LISTS AND STRINGS *)
-
 type op = Add | Sub | Equal | Neq | Less | Great | And | Or
 
 type typ = Int | Bool | Void | Str | List of typ
