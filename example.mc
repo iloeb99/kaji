@@ -2,7 +2,7 @@
 int a;
 int b;
 
-int gcd(int a, int b) {
+func int gcd(int a, int b) {
   while (a != b) {
     if (b < a) a = a - b;
     else b = b - a;
@@ -10,7 +10,7 @@ int gcd(int a, int b) {
   return a;
 }
 
-int main() {
+func int main() {
   int x;
   int y;
   a = 18;
