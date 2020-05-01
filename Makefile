@@ -4,7 +4,7 @@ LDFlags= -g
 
 default: kaji.native libstr.a
 
-kaji.native: ast.ml scanner.mll kajiparse.mly sast.ml semant.ml irgen.ml kaji.ml
+kaji.native: kaji.ml ast.ml scanner.mll kajiparse.mly sast.ml semant.ml irgen.ml
 	ocamlbuild -use-ocamlfind -pkgs llvm kaji.native
 
 libstr.a: str.o
@@ -15,6 +15,10 @@ str.o: str.h str.c
 
 .PHONY: clean
 clean:
-	ocamlbuild -clean
+	ocamlbuild -clean 2>/dev/null
 	rm -f *.native
-	rm -f *.o *.a *.s a.out *.byte
+	rm -rf _build
+	rm -rf *.o *.s *.byte exe a.out *.a
+
+.PHONY: all
+all: clean default
