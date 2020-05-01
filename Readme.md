@@ -1,7 +1,7 @@
 ### Build the Kaji compiler
 
 ```
-ocamlbuild -pkgs llvm kaji.native
+make
 ```
 
 ### Run the Kaji compiler and generate llvm code
@@ -26,6 +26,7 @@ lli example.out
 
 - `test1.ml`: the file to test the scanner and parser
 - `test2.ml`: the file to test the semantic checker
-- `kaji.ml`: top-level file to test and run microc compiler
-- `example.kaji`: a sample microc source code
-- `example.out`: a sample compiled code of example.mc
+- `kaji.ml`: top-level file to test and run kaji compiler
+- `Makefile`: the file to build the kaji compiler
+- `example.kaji`: a sample kaji source code
+- `example.out`: a sample compiled code of example.kaji
