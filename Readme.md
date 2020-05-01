@@ -6,12 +6,12 @@ make
 
 ### Run the Kaji compiler and generate llvm code
 ```
-./kaji.native -l example.kaji > example.out
+./kaji.native -l example.kaji
 ```
 
 ### Run the llvm code
 ```
-lli example.out
+./a.out
 ```
 
 ### Compiler files
