@@ -4,12 +4,12 @@
 make
 ```
 
-### Run the Kaji compiler and generate llvm code
+### Run the Kaji compiler and generate executable
 ```
 ./kaji.native -l example.kaji
 ```
 
-### Run the llvm code
+### Run the executable
 ```
 ./a.out
 ```
