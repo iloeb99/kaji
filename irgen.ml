@@ -1,15 +1,5 @@
 (* IR generation: translate takes a semantically checked AST and
    produces LLVM IR
-
-   LLVM tutorial: Make sure to read the OCaml version of the tutorial
-
-   http://llvm.org/docs/tutorial/index.html
-
-   Detailed documentation on the OCaml LLVM library:
-
-   http://llvm.moe/
-   http://llvm.moe/ocaml/
-
 *)
 
 module L = Llvm
@@ -32,12 +22,20 @@ let translate (globals, functions) =
   and i1_t       = L.i1_type     context 
   and void_t     = L.void_type   context in
 
+  (* Declare struct str *)
+  let struct_str_t : L.lltype =
+    L.named_struct_type context "str" in
+    
+  let _ =
+    L.struct_set_body struct_str_t
+    [| L.pointer_type i8_t ; i32_t |] false in
+
   (* Return the LLVM type for a Kaji type *)
   let ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
-    (*| A.Str   -> *)
     | A.Void  -> void_t
+    | A.Str   -> struct_str_t
   in
 
   (* Create a map of global variables after creating each *)
@@ -51,6 +49,17 @@ let translate (globals, functions) =
     L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue =
     L.declare_function "printf" printf_t the_module in
+
+  (* Declare C functions *)
+  let initStr_t : L.lltype = 
+    L.function_type void_t [| L.pointer_type struct_str_t |] in
+  let initStr : L.llvalue = L.declare_function "initStr" initStr_t the_module in
+
+  let freeStr : L.llvalue = L.declare_function "freeStr" initStr_t the_module in
+
+  let assignStr_t : L.lltype = L.function_type (L.pointer_type struct_str_t) 
+    [| L.pointer_type struct_str_t ; L.pointer_type i8_t |] in
+  let assignStr : L.llvalue = L.declare_function "assignStr" assignStr_t the_module in
 
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
@@ -84,6 +93,9 @@ let translate (globals, functions) =
        * resulting registers to our map *)
       and add_local m (t, n) =
         let local_var = L.build_alloca (ltype_of_typ t) n builder
+        in let _ = if t = A.Str then
+                        (ignore (L.build_call initStr [| local_var |] "" builder );)
+                else ()
         in StringMap.add n local_var m
       in
 
@@ -102,9 +114,13 @@ let translate (globals, functions) =
     let rec build_expr builder ((_, e) : sexpr) = match e with
         SLiteral i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
+      | SStrLit s   -> L.build_global_stringptr s "_tmpstr" builder
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = build_expr builder e in
-        ignore(L.build_store e' (lookup s) builder); e'
+        (match e with
+            (_, SStrLit(_)) -> L.build_call assignStr [| lookup s ; e' |] "" builder
+          | _               -> ignore(L.build_store e' (lookup s) builder); e'
+        )
       | SBinop (e1, op, e2) ->
         let e1' = build_expr builder e1
         and e2' = build_expr builder e2 in
@@ -116,11 +132,13 @@ let translate (globals, functions) =
          | A.Equal   -> L.build_icmp L.Icmp.Eq
          | A.Neq     -> L.build_icmp L.Icmp.Ne
          | A.Less    -> L.build_icmp L.Icmp.Slt
+         | A.Great   -> L.build_icmp L.Icmp.Sgt
         ) e1' e2' "tmp" builder
-      (*| SStrLit s -> *)
       | SCall ("print", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder e) |]
           "printf" builder
+      | SCall ("freeStr", [(_, SId(s))]) -> 
+        L.build_call freeStr [| lookup s |] "" builder
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in

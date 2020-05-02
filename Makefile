@@ -18,7 +18,7 @@ clean:
 	ocamlbuild -clean 2>/dev/null
 	rm -f *.native
 	rm -rf _build
-	rm -rf *.o *.s *.byte exe a.out *.a
+	rm -rf *.o *.s *.byte exe llvm.out a.out *.a
 
 .PHONY: all
 all: clean default
