@@ -1,11 +1,11 @@
 struct str
 {
-    char *s;
+    char *data;
     int length;
 };
 
-void initStr(struct str *string);
+void initStr(struct str *s);
 
-void freeStr(struct str *string);
+void freeStr(struct str *s);
 
-struct str *assignStr(struct str *string, char *val);
+struct str *assignStr(struct str *s, char *val);

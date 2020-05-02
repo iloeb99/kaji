@@ -2,29 +2,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-void initStr(struct str *string)
+void initStr(struct str *s)
 {
-    string->s = NULL;
-    string->length = 0;
+    s->data = NULL;
+    s->length = 0;
 }
 
-void freeStr(struct str *string)
+void freeStr(struct str *s)
 {
-    if (string->s != NULL)
+    if (s->data != NULL)
     {
-        free(string->s);
-        string->s = NULL;
-        string->length = 0;
+        free(s->data);
+        s->data = NULL;
+        s->length = 0;
     }
 }
 
-struct str *assignStr(struct str *string, char *val)
+struct str *assignStr(struct str *s, char *val)
 {
-    freeStr(string);
+    freeStr(s);
 
-    string->length = strlen(val);
-    string->s = malloc((string->length + 1) * sizeof(char));
-    strcpy(string->s, val);
+    s->length = strlen(val);
+    s->data = malloc((s->length + 1) * sizeof(char));
+    strcpy(s->data, val);
 
-    return string;
+    return s;
 }
