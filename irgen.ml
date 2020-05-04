@@ -30,12 +30,21 @@ let translate (globals, functions) =
     L.struct_set_body struct_str_t
     [| L.pointer_type i8_t ; i32_t |] false in
 
+  (* Declare struct list *)
+  let struct_list_t : L.lltype = 
+    L.named_struct_type context "list" in
+
+  let _ = 
+    L.struct_set_body struct_list_t
+    [| L.pointer_type (L.pointer_type void_t) ; i32_t ; i32_t |] false in
+
   (* Return the LLVM type for a Kaji type *)
   let ltype_of_typ = function
-      A.Int   -> i32_t
-    | A.Bool  -> i1_t
-    | A.Void  -> void_t
-    | A.Str   -> struct_str_t
+      A.Int  -> i32_t
+    | A.Bool -> i1_t
+    | A.Void -> void_t
+    | A.Str  -> struct_str_t
+    | A.List(_) -> struct_list_t
   in
 
   (* Create a map of global variables after creating each *)
@@ -60,6 +69,25 @@ let translate (globals, functions) =
   let assignStr_t : L.lltype = L.function_type (L.pointer_type struct_str_t) 
     [| L.pointer_type struct_str_t ; L.pointer_type i8_t |] in
   let assignStr : L.llvalue = L.declare_function "assignStr" assignStr_t the_module in
+
+  let initList_t : L.lltype =
+    L.function_type void_t [| L.pointer_type struct_list_t |] in
+  let initList : L.llvalue = L.declare_function "initList" initList_t the_module in
+
+  let freeList : L.llvalue = L.declare_function "freeList" initList_t the_module in
+
+  let assignList_t : L.lltype = L.function_type (L.pointer_type struct_list_t)
+    [| L.pointer_type struct_list_t ; L.pointer_type (L.pointer_type void_t) ; i32_t |] in
+  let assignList : L.llvalue = L.declare_function "assignList" assignList_t the_module in
+
+  let appendList_t : L.lltype = L.function_type void_t
+    [| L.pointer_type struct_list_t ; L.pointer_type void_t |] in
+  let appendList : L.llvalue = L.declare_function "appendList" appendList_t the_module in
+
+  let indexList_t : L.lltype = L.function_type void_t
+    [| L.pointer_type struct_list_t ; L.pointer_type void_t |] in
+  let indexList : L.llvalue = L.declare_function "indexList" indexList_t the_module in
+
 
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
@@ -93,9 +121,10 @@ let translate (globals, functions) =
        * resulting registers to our map *)
       and add_local m (t, n) =
         let local_var = L.build_alloca (ltype_of_typ t) n builder
-        in let _ = if t = A.Str then
-                        (ignore (L.build_call initStr [| local_var |] "" builder );)
-                else ()
+        in let _ = match t with
+            A.Str     -> (ignore (L.build_call initStr [| local_var |] "" builder );)
+          | A.List(_) -> (ignore (L.build_call initList [| local_var |] "" builder);)
+          | _         -> ()
         in StringMap.add n local_var m
       in
 
@@ -139,6 +168,8 @@ let translate (globals, functions) =
           "printf" builder
       | SCall ("freeStr", [(_, SId(s))]) -> 
         L.build_call freeStr [| lookup s |] "" builder
+      | SCall ("freeList", [(_, SId(s))]) ->
+        L.build_call freeList [| lookup s |] "" builder
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in
