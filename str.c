@@ -13,8 +13,7 @@ void freeStr(struct str *s)
     if (s->data != NULL)
     {
         free(s->data);
-        s->data = NULL;
-        s->length = 0;
+        initStr(s);
     }
 }
 

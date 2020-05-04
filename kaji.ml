@@ -34,6 +34,6 @@ let () =
                 fprintf out "%s\n" llvm_module; close_out out;
                 if (command "llc -relocation-model=pic llvm.out" != 0)
                 then raise (Failure "llc: non-zero exit code")
-                else if ((command "gcc llvm.out.s -L./ -lstr -o a.out" ) != 0)
+                else if ((command "gcc llvm.out.s -L./ -lstd -o a.out" ) != 0)
                 then raise (Failure "gcc: non-zero exit code")
                 else ()

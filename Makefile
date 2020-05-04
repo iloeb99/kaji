@@ -2,16 +2,18 @@ CC=gcc
 CFlags= -g -Wall
 LDFlags= -g
 
-default: kaji.native libstr.a
+default: kaji.native libstd.a
 
 kaji.native: kaji.ml ast.ml scanner.mll kajiparse.mly sast.ml semant.ml irgen.ml
 	ocamlbuild -use-ocamlfind -pkgs llvm kaji.native
 
-libstr.a: str.o
-	ar -crs libstr.a str.o
-	ranlib libstr.a
+libstd.a: str.o kajilist.o
+	ar -crs libstd.a str.o kajilist.o
+	ranlib libstd.a
 
 str.o: str.h str.c
+
+kajilist.o: kajilist.h kajilist.c
 
 .PHONY: clean
 clean:
