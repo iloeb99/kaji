@@ -4,10 +4,11 @@ func int main() {
 
     s = "Hello!";
     t = "Goodbye!";
+    
+    freeStr(s);
     s = t;
     t = ":)";
 
-    freeStr(s);
     freeStr(t);
 
     print(1);
