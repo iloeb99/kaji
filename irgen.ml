@@ -36,7 +36,7 @@ let translate (globals, functions) =
 
   let _ = 
     L.struct_set_body struct_list_t
-    [| L.pointer_type (L.pointer_type void_t) ; i32_t ; i32_t |] false in
+    [| L.pointer_type i8_t ; i32_t ; i32_t |] false in
 
   (* Return the LLVM type for a Kaji type *)
   let ltype_of_typ = function
@@ -77,15 +77,15 @@ let translate (globals, functions) =
   let freeList : L.llvalue = L.declare_function "freeList" initList_t the_module in
 
   let assignList_t : L.lltype = L.function_type (L.pointer_type struct_list_t)
-    [| L.pointer_type struct_list_t ; L.pointer_type (L.pointer_type void_t) ; i32_t |] in
+    [| L.pointer_type struct_list_t ; L.pointer_type i8_t ; i32_t |] in
   let assignList : L.llvalue = L.declare_function "assignList" assignList_t the_module in
 
   let appendList_t : L.lltype = L.function_type void_t
-    [| L.pointer_type struct_list_t ; L.pointer_type void_t |] in
+    [| L.pointer_type struct_list_t ; L.pointer_type i8_t |] in
   let appendList : L.llvalue = L.declare_function "appendList" appendList_t the_module in
 
   let indexList_t : L.lltype = L.function_type void_t
-    [| L.pointer_type struct_list_t ; L.pointer_type void_t |] in
+    [| L.pointer_type struct_list_t ; L.pointer_type i8_t |] in
   let indexList : L.llvalue = L.declare_function "indexList" indexList_t the_module in
 
 
@@ -143,7 +143,10 @@ let translate (globals, functions) =
     let rec build_expr builder ((_, e) : sexpr) = match e with
         SLiteral i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
-      | SStrLit s   -> L.build_global_stringptr s "_tmpstr" builder
+      | SStrLit s   -> let s' = L.const_stringz context s in
+                        let a = L.build_alloca (L.type_of s') "_tmpstr" builder in
+                          let _ = L.build_store s' a builder in
+                            L.build_bitcast a (L.pointer_type i8_t) "_tmpstr" builder
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = build_expr builder e in
         (match e with
