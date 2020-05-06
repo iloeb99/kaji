@@ -73,10 +73,13 @@ let check (globals, functions) =
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
-    let check_assign lvaluet rvaluet err =
+    let rec check_assign lvaluet rvaluet err =
       match lvaluet with
-        List(_) -> if rvaluet = List(Void) || lvaluet = rvaluet then lvaluet else raise (Failure err)
-      | _ -> if lvaluet = rvaluet then lvaluet else raise (Failure err)
+        List(t) -> begin match rvaluet with
+            | Void -> lvaluet
+            | List(t') -> check_assign t t' err
+            | _  -> raise (Failure err) end
+      | _ -> if rvaluet = Void || lvaluet = rvaluet then lvaluet else raise (Failure err)
     in
 
     (* Build local symbol table of variables for this function *)
@@ -96,9 +99,13 @@ let check (globals, functions) =
       | BoolLit l -> (Bool, SBoolLit l)
       | StrLit l -> (Str, SStrLit l)
       | ListLit l ->
-        let rec check = function
+        let check' t1 t2 = match (t1, t2) with
+            (List(t1'), List(t2')) -> t1' = Void || t2' = Void || t1' = t2'
+          | _ -> t1 = t2
+
+        in let rec check = function
             (t1, _) :: (t2, e2) :: tail ->
-            if t1 = t2 then
+            if (check' t1 t2) then
               check ((t2, e2)::tail)
             else raise (Failure "list contains inconsistent types")
           | (t, _) :: tail -> List(t)
