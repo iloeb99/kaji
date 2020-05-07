@@ -120,12 +120,13 @@ let translate (globals, functions) =
       (* Allocate space for any locally declared variables and add the
        * resulting registers to our map *)
       and add_local m (t, n) =
-        match t with
-          | A.Str      -> let local_var = L.build_malloc (ltype_of_typ t) n builder
-                          in (ignore (L.build_call initStr [| local_var |] "" builder );)
-          | A.List(_)  -> let local_var = L.build_malloc (ltype_of_typ t) n builder
-                          in (ignore (L.build_call initList [| local_var |] "" builder);)
-          | _          -> ignore (L.build_alloca (ltype_of_typ t) n builder)
+        let local_var = match t with
+            A.Str | A.List(_) -> L.build_malloc (ltype_of_typ t) n builder
+          | _                 -> L.build_alloca (ltype_of_typ t) n builder
+        in let _ = match t with
+            A.Str     -> (ignore (L.build_call initStr [| local_var |] "" builder );)
+          | A.List(_) -> (ignore (L.build_call initList [| local_var |] "" builder);)
+          | _         -> ()
         in StringMap.add n local_var m
       in
 
