@@ -145,15 +145,16 @@ let translate (globals, functions) =
     let rec build_expr builder ((_, e) : sexpr) = match e with
         SLiteral i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
-      | SStrLit s   -> let s' = L.const_stringz context s in
-                        let a = L.build_alloca (L.type_of s') "_tmpstr" builder in
-                          let _ = L.build_store s' a builder in
-                            L.build_bitcast a (L.pointer_type i8_t) "_tmpstr" builder
+      | SStrLit s   -> let a = L.build_malloc struct_str_t "_tmpstr" builder in
+                        let _ = L.build_call initStr [| a |] "" builder in
+                        let s' = L.const_stringz context s in
+                        let _ = L.build_call assignStr [| a ; s' |] "" builder in
+                        a
       | SListLit ls -> let lp = L.build_malloc struct_list_t "_tmplst" builder in
                         let _ = L.build_call initList [| lp |] "" builder in
                         let _ = List.iter (fun s ->
                             let s' = match s with
-                            | (A.Str, _) -> L.build_malloc (L.pointer_type struct_str_t) "_lstitem" builder  (*TODO: Do strings the same as lists *)
+                            | (A.Str, _) -> L.build_malloc (L.pointer_type struct_str_t) "_lstitem" builder
                             | (A.List(_), _) -> L.build_malloc (L.pointer_type struct_list_t) "_lstitem" builder
                             | _ -> L.build_malloc (ltype_of_typ (fst s)) "_lstitem" builder
                             in let _ = L.build_store (build_expr builder s) s' builder
@@ -161,11 +162,7 @@ let translate (globals, functions) =
                         ) ls in
                         lp
       | SId s       -> L.build_load (lookup s) s builder
-      | SAssign (s, e) -> let e' = build_expr builder e in
-        (match e with
-            (_, SStrLit(_)) -> L.build_call assignStr [| lookup s ; e' |] "" builder
-          | _               -> ignore(L.build_store e' (lookup s) builder); e'
-        )
+      | SAssign (s, e) -> let e' = build_expr builder e in ignore(L.build_store e' (lookup s) builder); e'
       | SBinop (e1, op, e2) ->
         let e1' = build_expr builder e1
         and e2' = build_expr builder e2 in
