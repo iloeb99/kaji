@@ -149,6 +149,17 @@ let translate (globals, functions) =
                         let a = L.build_alloca (L.type_of s') "_tmpstr" builder in
                           let _ = L.build_store s' a builder in
                             L.build_bitcast a (L.pointer_type i8_t) "_tmpstr" builder
+      | SListLit ls -> let lp = L.build_malloc struct_list_t "_tmplst" builder in
+                        let _ = L.build_call initList [| lp |] "" builder in
+                        let _ = List.iter (fun s ->
+                            let s' = match s with
+                            | (A.Str, _) -> L.build_malloc (L.pointer_type struct_str_t) "_lstitem" builder  (*TODO: Do strings the same as lists *)
+                            | (A.List(_), _) -> L.build_malloc (L.pointer_type struct_list_t) "_lstitem" builder
+                            | _ -> L.build_malloc (ltype_of_typ (fst s)) "_lstitem" builder
+                            in let _ = L.build_store (build_expr builder s) s' builder
+                            in ignore(L.build_call appendList [| lp ; s' |] "" builder);
+                        ) ls in
+                        lp
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = build_expr builder e in
         (match e with
