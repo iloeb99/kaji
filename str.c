@@ -27,3 +27,10 @@ struct str *assignStr(struct str *s, char *val)
 
     return s;
 }
+
+void copyStr(struct str *dest, struct str *src)
+{
+	dest->data = malloc((src->length + 1) * sizeof(char));
+	dest->length = src->length;
+	strcpy(dest->data, src->data);
+}

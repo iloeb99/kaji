@@ -27,7 +27,7 @@ let check (globals, functions) =
 
   (* TODO: ADD BUILT-IN FUNCS *)
   (* Collect function declarations for built-in functions: no bodies *)
-  let tmp =
+  let built_in_decls =
     StringMap.add "print" {
       rtyp = Int;
       fname = "print";
@@ -38,7 +38,13 @@ let check (globals, functions) =
       rtyp = Void;
       fname = "freeStr";
       formals = [(Str, "s")];
-      locals = []; body = [] } tmp
+      locals = []; body = [] } built_in_decls
+  in let built_in_decls =
+    StringMap.add "copyStr" {
+      rtyp = Void;
+      fname = "copyStr";
+      formals = [(Str, "dest") ; (Str, "src")];
+      locals = []; body = [] } built_in_decls
   in
 
 

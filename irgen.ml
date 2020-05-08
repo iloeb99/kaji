@@ -70,6 +70,9 @@ let translate (globals, functions) =
     [| L.pointer_type struct_str_t ; L.pointer_type i8_t |] in
   let assignStr : L.llvalue = L.declare_function "assignStr" assignStr_t the_module in
 
+  let copyStr_t : L.lltype = L.function_type void_t [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
+  let copyStr : L.llvalue = L.declare_function "copyStr" copyStr_t the_module in
+
   let initList_t : L.lltype =
     L.function_type void_t [| L.pointer_type struct_list_t |] in
   let initList : L.llvalue = L.declare_function "initList" initList_t the_module in
@@ -178,11 +181,16 @@ let translate (globals, functions) =
       | SCall ("print", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder e) |]
           "printf" builder
+      | SCall ("copyStr", [(_, SId(dest)) ; (_, SId(src))]) ->
+         let d = L.build_malloc struct_str_t "" builder in
+         let _ = L.build_call initStr [| d |] "" builder in
+         let _ = L.build_store d (lookup dest) builder in
+         let s = L.build_load (lookup src) "" builder in
+         L.build_call copyStr [| d ; s |] "" builder
       | SCall ("freeStr", [(_, SId(s))]) -> 
          let p = L.build_load (lookup s) "_str" builder in
          let r = L.build_call freeStr [| p |] "" builder in
-         let _ = L.build_free p builder in
-         r
+         let _ = L.build_free p builder in r
       | SCall ("freeList", [(_, SId(s))]) ->
         L.build_call freeList [| lookup s |] "" builder
       | SCall (f, args) ->
