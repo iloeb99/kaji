@@ -121,12 +121,8 @@ let translate (globals, functions) =
        * resulting registers to our map *)
       and add_local m (t, n) =
         let local_var = match t with
-            A.Str | A.List(_) -> L.build_malloc (ltype_of_typ t) n builder
+            A.Str | A.List(_) -> L.build_alloca (L.pointer_type (ltype_of_typ t)) n builder
           | _                 -> L.build_alloca (ltype_of_typ t) n builder
-        in let _ = match t with
-            A.Str     -> (ignore (L.build_call initStr [| local_var |] "" builder );)
-          | A.List(_) -> (ignore (L.build_call initList [| local_var |] "" builder);)
-          | _         -> ()
         in StringMap.add n local_var m
       in
 
@@ -148,7 +144,10 @@ let translate (globals, functions) =
       | SStrLit s   -> let a = L.build_malloc struct_str_t "_tmpstr" builder in
                         let _ = L.build_call initStr [| a |] "" builder in
                         let s' = L.const_stringz context s in
-                        let _ = L.build_call assignStr [| a ; s' |] "" builder in
+                        let b = L.build_alloca (L.type_of s') "_tmpstr" builder in
+                        let _ = L.build_store s' b builder in
+                        let s'' = L.build_bitcast b (L.pointer_type i8_t) "_tmpstr" builder in
+                        let _ = L.build_call assignStr [| a ; s'' |] "" builder in
                         a
       | SListLit ls -> let lp = L.build_malloc struct_list_t "_tmplst" builder in
                         let _ = L.build_call initList [| lp |] "" builder in
@@ -180,7 +179,10 @@ let translate (globals, functions) =
         L.build_call printf_func [| int_format_str ; (build_expr builder e) |]
           "printf" builder
       | SCall ("freeStr", [(_, SId(s))]) -> 
-        L.build_call freeStr [| lookup s |] "" builder
+         let p = L.build_load (lookup s) "_str" builder in
+         let r = L.build_call freeStr [| p |] "" builder in
+         let _ = L.build_free p builder in
+         r
       | SCall ("freeList", [(_, SId(s))]) ->
         L.build_call freeList [| lookup s |] "" builder
       | SCall (f, args) ->
