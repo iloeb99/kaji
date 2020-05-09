@@ -1,4 +1,5 @@
 #include "str.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -33,4 +34,14 @@ void copyStr(struct str *dest, struct str *src)
 	dest->data = malloc((src->length + 1) * sizeof(char));
 	dest->length = src->length;
 	strcpy(dest->data, src->data);
+}
+
+int printStr(struct str *s)
+{
+	return printf("%s\n", s->data);
+}
+
+char *getData(struct str *s)
+{
+	return s->data;
 }

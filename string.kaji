@@ -5,9 +5,15 @@ func int main() {
     s = "Hello!";
     t = "Goodbye!";
     
+	printStr(s);
+	printStr(t);
+
     freeStr(s);
     s = t;
     t = ":)";
+	
+	printStr(s);
+	printStr(t);
 
     freeStr(t);
 
@@ -15,3 +21,4 @@ func int main() {
 
     return 0;
 }
+

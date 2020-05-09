@@ -28,11 +28,17 @@ let check (globals, functions) =
   (* TODO: ADD BUILT-IN FUNCS *)
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
+    StringMap.add "printStr" {
+      rtyp = Int;
+      fname = "printStr";
+      formals = [(Str, "s")];
+      locals = []; body = [] } StringMap.empty
+  in let built_in_decls =
     StringMap.add "print" {
       rtyp = Int;
       fname = "print";
       formals = [(Int, "x")];
-      locals = []; body = [] } StringMap.empty
+      locals = []; body = [] } built_in_decls
   in let built_in_decls =
     StringMap.add "freeStr" {
       rtyp = Void;
