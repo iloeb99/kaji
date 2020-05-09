@@ -8,3 +8,6 @@ TODO
 	pattern matching gets weird), instead semant.ml should translate the
 	overloaded function into a differently named function that IRgen can call
 	and refer to more easily.
+
+- Check equality of strings? Either through some kind of strcmp()/equals() or
+  directly through the == operator
