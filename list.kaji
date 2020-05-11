@@ -1,9 +1,22 @@
 func int main() {
-    list<int> l;
+    list<list<int>> l;
+	list<str> l2;
+	int k;
+	int j;
+	str s;
 
-    [1,2,3,4,5];
+    //l = [1,2,3,4,5];
+	l = [[],[3,2,1],[8,9,10,11,12],[0,0,0]];
+	l2 = ["Hello","there","world!"];
 
-    print(1);
+	k = l[1][1];
+	j = l[k][k+2];
+
+	s = l2[2];
+
+    print(k);
+    print(j);
+	printStr(s);
 
     return 0;
 }

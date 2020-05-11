@@ -11,3 +11,5 @@ TODO
 
 - Check equality of strings? Either through some kind of strcmp()/equals() or
   directly through the == operator
+
+- Disallow declaration of list<void> by user?

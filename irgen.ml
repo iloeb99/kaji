@@ -93,8 +93,8 @@ let translate (globals, functions) =
     [| L.pointer_type struct_list_t ; L.pointer_type i8_t |] in
   let appendList : L.llvalue = L.declare_function "appendList" appendList_t the_module in
 
-  let indexList_t : L.lltype = L.function_type void_t
-    [| L.pointer_type struct_list_t ; L.pointer_type i8_t |] in
+  let indexList_t : L.lltype = L.function_type (L.pointer_type i8_t)
+    [| L.pointer_type struct_list_t ; i32_t |] in
   let indexList : L.llvalue = L.declare_function "indexList" indexList_t the_module in
 
 
@@ -155,7 +155,7 @@ let translate (globals, functions) =
                         let s' = L.const_stringz context s in
                         let b = L.build_alloca (L.type_of s') "_tmpstr" builder in
                         let _ = L.build_store s' b builder in
-                        let s'' = L.build_bitcast b (L.pointer_type i8_t) "_tmpstr" builder in
+                        let s'' = L.build_bitcast b (L.pointer_type i8_t) "" builder in
                         let _ = L.build_call assignStr [| a ; s'' |] "" builder in
                         a
       | SListLit ls -> let lp = L.build_malloc struct_list_t "_tmplst" builder in
@@ -166,11 +166,23 @@ let translate (globals, functions) =
                             | (A.List(_), _) -> L.build_malloc (L.pointer_type struct_list_t) "_lstitem" builder
                             | _ -> L.build_malloc (ltype_of_typ (fst s)) "_lstitem" builder
                             in let _ = L.build_store (build_expr builder s) s' builder
-                            in ignore(L.build_call appendList [| lp ; s' |] "" builder);
+                            in let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
+                            in ignore(L.build_call appendList [| lp ; s'' |] "" builder);
                         ) ls in
                         lp
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = build_expr builder e in ignore(L.build_store e' (lookup s) builder); e'
+      | SIndex(le, i) -> let ls = build_expr builder le in
+                         let i' = build_expr builder i in
+                         let ep' = L.build_call indexList [| ls ; i' |] "" builder in
+                         let pt = match (fst le) with
+                           | A.List(lt) -> begin match lt with
+                             | A.List(_) | A.Str -> L.pointer_type (ltype_of_typ lt)
+                             | _ -> ltype_of_typ lt
+                             end
+                           | _ -> i8_t in (*SHOULD NEVER HAPPEN*)
+                         let ep = L.build_bitcast ep' (L.pointer_type pt) "" builder in
+                         L.build_load ep "_ele" builder
       | SBinop (e1, op, e2) ->
         let e1' = build_expr builder e1
         and e2' = build_expr builder e2 in
