@@ -20,6 +20,7 @@ size_t write_string(char *ptr, size_t size, size_t nmemb, struct str *s)
 
     strcpy(s->data, tmp.data);
     strncpy(s->data + tmp.length, ptr, nmemb);
+    s->data[s->length] = '\0';
     freeStr(&tmp);
   } else {
     s->length = nmemb;
@@ -28,6 +29,20 @@ size_t write_string(char *ptr, size_t size, size_t nmemb, struct str *s)
   }
 
   return nmemb;
+}
+
+void cacert(CURL *curl)
+{
+  const char* cacert = getenv("CACERT_PATH");
+  const char* certpath = getenv("CERT_DIR");
+
+  if (certpath != NULL) {
+    curl_easy_setopt(curl, CURLOPT_CAPATH, certpath);
+  }
+
+  else if (cacert != NULL) {
+    curl_easy_setopt(curl, CURLOPT_CAINFO, cacert);
+  }
 }
 
 struct str get(const char *url)
@@ -44,6 +59,7 @@ struct str get(const char *url)
       curl_easy_setopt(curl, CURLOPT_URL, url);
       /* example.com is redirected, so we tell libcurl to follow redirection */
       curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+      cacert(curl);
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_string);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
 
