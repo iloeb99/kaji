@@ -10,7 +10,7 @@ func int main() {
 	l2 = ["Hello","there","world!"];
 
 	k = l[1][1];
-	j = l[k][k+2];
+	j = listLen(l2);
 
 	s = l2[2];
 

@@ -89,6 +89,9 @@ let translate (globals, functions) =
     [| L.pointer_type struct_list_t ; L.pointer_type i8_t ; i32_t |] in
   let assignList : L.llvalue = L.declare_function "assignList" assignList_t the_module in
 
+  let listLen_t : L.lltype = L.function_type i32_t [| L.pointer_type struct_list_t |] in
+  let listLen : L.llvalue = L.declare_function "listLen" listLen_t the_module in
+
   let appendList_t : L.lltype = L.function_type void_t
     [| L.pointer_type struct_list_t ; L.pointer_type i8_t |] in
   let appendList : L.llvalue = L.declare_function "appendList" appendList_t the_module in
@@ -213,6 +216,9 @@ let translate (globals, functions) =
          let _ = L.build_free p builder in r
       | SCall ("freeList", [(_, SId(s))]) ->
         L.build_call freeList [| lookup s |] "" builder
+      | SCall ("listLen", [lexpr]) ->
+        let lp = build_expr builder lexpr in
+        L.build_call listLen [| lp |] "" builder
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in

@@ -15,3 +15,5 @@ TODO
 - Disallow declaration of list<void> by user?
 
 - guard against doing the binops with non-int types
+
+- check that for loop's variable name not used?

@@ -51,6 +51,12 @@ let check (globals, functions) =
       fname = "copyStr";
       formals = [(Str, "dest") ; (Str, "src")];
       locals = []; body = [] } built_in_decls
+  in let built_in_decls =
+    StringMap.add "listLen" {
+      rtyp = Int;
+      fname = "listLen";
+      formals = [(List(Void), "ls")];
+      locals = []; body = [] } built_in_decls
   in
 
 
@@ -89,7 +95,7 @@ let check (globals, functions) =
       match lvaluet with
         List(t) -> begin match rvaluet with
             | Void -> lvaluet
-            | List(t') -> check_assign t t' err
+            | List(t') -> if t = Void then rvaluet else check_assign t t' err
             | _  -> raise (Failure err) end
       | _ -> if rvaluet = Void || lvaluet = rvaluet then lvaluet else raise (Failure err)
     in
