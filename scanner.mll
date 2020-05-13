@@ -44,7 +44,7 @@ rule token = parse
 | "false"  { BLIT(false) }
 | digit+ as lem  { LITERAL(int_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
-| '"'([^'"'])*'"' as lem { STRLIT(lem) }
+| '"'([^'"'])*'"' as lem { STRLIT(String.sub lem 1 (String.length lem - 2)) }
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
