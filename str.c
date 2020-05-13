@@ -45,3 +45,8 @@ char *getData(struct str *s)
 {
 	return s->data;
 }
+
+int strLen(struct str *s)
+{
+	return s->length;
+}

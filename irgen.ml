@@ -76,6 +76,8 @@ let translate (globals, functions) =
   let printStr_t : L.lltype = L.function_type i32_t [| L.pointer_type struct_str_t |] in
   let printStr : L.llvalue = L.declare_function "printStr" printStr_t the_module in
 
+  let strLen : L.llvalue = L.declare_function "listLen" printStr_t the_module in
+
   let getData_t : L.lltype = L.function_type (L.pointer_type i8_t) [| L.pointer_type struct_str_t |] in
   let getData : L.llvalue = L.declare_function "getData" getData_t the_module in
 
@@ -219,6 +221,9 @@ let translate (globals, functions) =
       | SCall ("listLen", [lexpr]) ->
         let lp = build_expr builder lexpr in
         L.build_call listLen [| lp |] "" builder
+      | SCall ("strLen", [exp]) ->
+        let sp = build_expr builder exp in
+        L.build_call strLen [| sp |] "" builder
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in

@@ -52,6 +52,12 @@ let check (globals, functions) =
       formals = [(Str, "dest") ; (Str, "src")];
       locals = []; body = [] } built_in_decls
   in let built_in_decls =
+    StringMap.add "strLen" {
+      rtyp = Int;
+      fname = "strLen";
+      formals = [(Str, "s")];
+      locals = []; body = [] } built_in_decls
+  in let built_in_decls =
     StringMap.add "listLen" {
       rtyp = Int;
       fname = "listLen";

@@ -15,3 +15,5 @@ void copyStr(struct str *dest, struct str *src);
 int printStr(struct str *s);
 
 char *getData(struct str *s);
+
+int strLen(struct str *s);
