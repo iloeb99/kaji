@@ -41,6 +41,11 @@ void expandList(struct list *l, int n)
     l->data = tmp;
 }
 
+int listLen(struct list *l)
+{
+	return l->length;
+}
+
 void appendList(struct list *l, void *val)
 {
     if (l->capacity == l->length)

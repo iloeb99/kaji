@@ -17,3 +17,7 @@ int printStr(struct str *s);
 char *getData(struct str *s);
 
 void subStr(int start, int end, const struct str *s, struct str *sub);
+
+int strLen(struct str *s);
+
+int strEq(struct str *s, struct str *t);

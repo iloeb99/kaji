@@ -24,7 +24,7 @@ type stmt =
   | Expr of expr
   | If of expr * stmt * stmt
   | While of expr * stmt
-  | For of bind * expr * stmt
+  | For of expr * expr * stmt
   (* return *)
   | Return of expr
 
@@ -72,7 +72,7 @@ let rec string_of_stmt = function
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
                       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  | For((t, a), e2, s) -> "for " ^ a ^ " in " ^ string_of_expr e2 ^ " " ^ string_of_stmt s
+  | For(e1, e2, s) -> "for " ^ string_of_expr e1 ^ " in " ^ string_of_expr e2 ^ " " ^ string_of_stmt s
 
 let rec string_of_typ = function
     Int -> "int"

@@ -6,11 +6,26 @@ func int main() {
     t = "Goodbye!";
     
 	printStr(s);
+	print(strLen(s));
 	printStr(t);
+	print(strLen(t));
 
     freeStr(s);
     s = t;
+
+	if(strEq(s,t)) {
+		printStr("equal");
+	} else {
+		printStr("not equal");
+	}
+
     t = ":)";
+
+	if(strEq(s,t)) {
+		printStr("equal");
+	} else {
+		printStr("not equal");
+	}
 	
 	printStr(s);
 	printStr(t);

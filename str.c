@@ -56,3 +56,12 @@ void subStr(int start, int end, const struct str *s, struct str *sub)
         sub->data[sublen] = '\0';
     }
 }
+int strLen(struct str *s)
+{
+	return s->length;
+}
+
+int strEq(struct str *s, struct str *t)
+{
+	return strcmp(s->data, t->data);
+}

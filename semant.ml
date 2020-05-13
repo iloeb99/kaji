@@ -12,13 +12,15 @@ module StringMap = Map.Make(String)
 
 let check (globals, functions) =
 
-  (* Verify a list of bindings has no duplicate names *)
+  (* Verify a list of bindings has no duplicate names or voids *)
   let check_binds (kind : string) (binds : (typ * string) list) =
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
         raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
-      | _ :: t -> dups t
+      | (t, n) :: tl -> if t = Void
+                          then raise (Failure ("variable " ^ n ^ " cannot be of type Void"))
+                          else dups tl
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
 
@@ -50,6 +52,24 @@ let check (globals, functions) =
       rtyp = Void;
       fname = "copyStr";
       formals = [(Str, "dest") ; (Str, "src")];
+      locals = []; body = [] } built_in_decls
+  in let built_in_decls =
+    StringMap.add "strLen" {
+      rtyp = Int;
+      fname = "strLen";
+      formals = [(Str, "s")];
+      locals = []; body = [] } built_in_decls
+  in let built_in_decls =
+    StringMap.add "listLen" {
+      rtyp = Int;
+      fname = "listLen";
+      formals = [(List(Void), "ls")];
+      locals = []; body = [] } built_in_decls
+  in let built_in_decls =
+    StringMap.add "strEq" {
+      rtyp = Bool;
+      fname = "strEq";
+      formals = [(Str, "s") ; (Str, "t")];
       locals = []; body = [] } built_in_decls
   in
 
@@ -89,7 +109,7 @@ let check (globals, functions) =
       match lvaluet with
         List(t) -> begin match rvaluet with
             | Void -> lvaluet
-            | List(t') -> check_assign t t' err
+            | List(t') -> if t = Void then rvaluet else check_assign t t' err
             | _  -> raise (Failure err) end
       | _ -> if rvaluet = Void || lvaluet = rvaluet then lvaluet else raise (Failure err)
     in
@@ -200,13 +220,14 @@ let check (globals, functions) =
         SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
       | While(e, st) ->
         SWhile(check_bool_expr e, check_stmt st)
-      | For((t, n), e, st) ->
-        let se = check_expr e in
-        let v = match se with
-            (List(Void), _) -> SFor((t,n), se, check_stmt st)
-          | (List(t'), _) -> if t = t' then SFor((t,n), se, check_stmt st) else raise(Failure "list type does not match iterator type")
-          | _ -> raise(Failure "cannot iterate through non-list type")
-        in v
+      | For(lv, e, st) -> begin match lv with
+        | Id(n) -> let se = check_expr e in
+                    let slv = check_expr lv in
+                    begin match se with
+                      | (List(Void), _) -> SFor(slv, se, check_stmt st)
+                      | (List(t'), _) -> if fst slv = t' then SFor(slv, se, check_stmt st) else raise(Failure "list type does not match iterator type")
+                      | _ -> raise(Failure "cannot iterate through non-list type") end
+        | _     -> raise(Failure "For loop must contain iterator variable") end
       | Return e ->
         let (t, e') = check_expr e in
         if t = func.rtyp then SReturn (t, e')
