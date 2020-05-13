@@ -6,7 +6,7 @@ func int main() {
     
 	printStr(s);
 
-    substring(0, 5, s, t);
+    subStr(0, 5, s, t);
 	
 	printStr(t);
 
