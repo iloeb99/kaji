@@ -16,4 +16,4 @@ TODO
 
 - guard against doing the binops with non-int types
 
-- check that for loop's variable name not used?
+- list+string length
