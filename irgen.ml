@@ -84,9 +84,6 @@ let translate (globals, functions) =
 
   let strLen : L.llvalue = L.declare_function "listLen" printStr_t the_module in
 
-  let getData_t : L.lltype = L.function_type (L.pointer_type i8_t) [| L.pointer_type struct_str_t |] in
-  let getData : L.llvalue = L.declare_function "getData" getData_t the_module in
-
   let subStr_t : L.lltype = L.function_type void_t [| i32_t; i32_t; L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
   let subStr : L.llvalue = L.declare_function "subStr" subStr_t the_module in
 
@@ -95,10 +92,6 @@ let translate (globals, functions) =
   let initList : L.llvalue = L.declare_function "initList" initList_t the_module in
 
   let freeList : L.llvalue = L.declare_function "freeList" initList_t the_module in
-
-  let assignList_t : L.lltype = L.function_type (L.pointer_type struct_list_t)
-    [| L.pointer_type struct_list_t ; L.pointer_type i8_t ; i32_t |] in
-  let assignList : L.llvalue = L.declare_function "assignList" assignList_t the_module in
 
   let listLen_t : L.lltype = L.function_type i32_t [| L.pointer_type struct_list_t |] in
   let listLen : L.llvalue = L.declare_function "listLen" listLen_t the_module in
