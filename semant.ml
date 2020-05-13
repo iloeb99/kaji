@@ -65,6 +65,12 @@ let check (globals, functions) =
       fname = "listLen";
       formals = [(List(Void), "ls")];
       locals = []; body = [] } built_in_decls
+  in let built_in_decls =
+    StringMap.add "strEq" {
+      rtyp = Bool;
+      fname = "strEq";
+      formals = [(Str, "s") ; (Str, "t")];
+      locals = []; body = [] } built_in_decls
   in
 
 

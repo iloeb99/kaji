@@ -17,3 +17,5 @@ int printStr(struct str *s);
 char *getData(struct str *s);
 
 int strLen(struct str *s);
+
+int strEq(struct str *s, struct str *t);

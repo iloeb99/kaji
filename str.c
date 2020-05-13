@@ -50,3 +50,8 @@ int strLen(struct str *s)
 {
 	return s->length;
 }
+
+int strEq(struct str *s, struct str *t)
+{
+	return strcmp(s->data, t->data);
+}

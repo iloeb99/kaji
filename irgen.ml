@@ -73,6 +73,9 @@ let translate (globals, functions) =
   let copyStr_t : L.lltype = L.function_type void_t [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
   let copyStr : L.llvalue = L.declare_function "copyStr" copyStr_t the_module in
 
+  let strEq_t : L.lltype = L.function_type i32_t [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
+  let strEq : L.llvalue = L.declare_function "strEq" strEq_t the_module in
+
   let printStr_t : L.lltype = L.function_type i32_t [| L.pointer_type struct_str_t |] in
   let printStr : L.llvalue = L.declare_function "printStr" printStr_t the_module in
 
@@ -212,6 +215,11 @@ let translate (globals, functions) =
          let _ = L.build_store d (lookup dest) builder in
          let s = L.build_load (lookup src) "" builder in
          L.build_call copyStr [| d ; s |] "" builder
+      | SCall ("strEq", [e1 ; e2]) ->
+         let e1' = build_expr builder e1 in
+         let e2' = build_expr builder e2 in
+         let i = L.build_call strEq [| e1' ; e2' |] "" builder in
+         L.build_icmp L.Icmp.Eq i (L.const_int i32_t 0) "" builder
       | SCall ("freeStr", [(_, SId(s))]) -> 
          let p = L.build_load (lookup s) "_str" builder in
          let r = L.build_call freeStr [| p |] "" builder in
