@@ -227,12 +227,12 @@ let translate (globals, functions) =
          let p = L.build_load (lookup s) "_str" builder in
          let r = L.build_call freeStr [| p |] "" builder in
          let _ = L.build_free p builder in r
-      | SCall ("subStr", [(_, SLiteral(start)) ; (_, SLiteral(end)) ; (_, SId(src)) ; (_, SId(dest))]) ->
+      | SCall ("subStr", [(_, SLiteral(start)) ; (_, SLiteral(e)) ; (_, SId(src)) ; (_, SId(dest))]) ->
          let d = L.build_malloc struct_str_t "" builder in
          let _ = L.build_call initStr [| d |] "" builder in
          let _ = L.build_store d (lookup dest) builder in
          let s = L.build_load (lookup src) "" builder in
-         L.build_call subStr [| start ; end ; d ; s |] "" builder
+         L.build_call subStr [| start ; e ; d ; s |] "" builder
       | SCall ("freeList", [(_, SId(s))]) ->
         L.build_call freeList [| lookup s |] "" builder
       | SCall ("listLen", [lexpr]) ->
