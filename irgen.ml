@@ -70,9 +70,6 @@ let translate (globals, functions) =
     [| L.pointer_type struct_str_t ; L.pointer_type i8_t |] in
   let assignStr : L.llvalue = L.declare_function "assignStr" assignStr_t the_module in
 
-  let copyStr_t : L.lltype = L.function_type void_t [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
-  let copyStr : L.llvalue = L.declare_function "copyStr" copyStr_t the_module in
-
   let strEq_t : L.lltype = L.function_type i32_t [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
   let strEq : L.llvalue = L.declare_function "strEq" strEq_t the_module in
 
@@ -214,12 +211,6 @@ let translate (globals, functions) =
         L.build_call printStr [| (build_expr builder e) |] "_printstr" builder
       | SCall ("fprintStr", [f ; s ; a]) ->
         L.build_call fprintStr [| build_expr builder f ; build_expr builder s ; build_expr builder a |] "_fprintStr" builder
-      | SCall ("copyStr", [(_, SId(dest)) ; (_, SId(src))]) ->
-         let d = L.build_malloc struct_str_t "" builder in
-         let _ = L.build_call initStr [| d |] "" builder in
-         let _ = L.build_store d (lookup dest) builder in
-         let s = L.build_load (lookup src) "" builder in
-         L.build_call copyStr [| d ; s |] "" builder
       | SCall ("strEq", [e1 ; e2]) ->
          let e1' = build_expr builder e1 in
          let e2' = build_expr builder e2 in
