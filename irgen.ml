@@ -84,7 +84,7 @@ let translate (globals, functions) =
   let getData_t : L.lltype = L.function_type (L.pointer_type i8_t) [| L.pointer_type struct_str_t |] in
   let getData : L.llvalue = L.declare_function "getData" getData_t the_module in
 
-  let subStr_t : L.lltype = L.function_type void_t [| i32_t; i32_t; L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
+  let subStr_t : L.lltype = L.function_type void_t [| L.const_int i32_t; L.const_int i32_t; L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
   let subStr : L.llvalue = L.declare_function "subStr" subStr_t the_module in
 
   let initList_t : L.lltype =
