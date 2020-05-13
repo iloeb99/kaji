@@ -9,8 +9,6 @@ void initList(struct list *l);
 
 void freeList(struct list *l);
 
-struct list *assignList(struct list *l, void **vals, int len);
-
 void expandList(struct list *l, int n);
 
 int listLen(struct list *l);
