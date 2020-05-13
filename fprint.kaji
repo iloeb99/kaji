@@ -1,13 +1,13 @@
 func int main() {
     str s;
-    s = "This should be at beginning of file. ";
+    s = "This should be at beginning of file.\n";
 
     printStr("Writing to tmp.txt...");
     fprintStr("tmp.txt", s, 0);
-    printStr("Done.");
+    printStr("Done.\n");
 
     printStr("Appending to tmp.txt...");
-    fprintStr("tmp.txt", "This should be at end of file.", 1);
+    fprintStr("tmp.txt", "This should be at end of file.\n", 1);
     printStr("Done.");
 
     return 0;

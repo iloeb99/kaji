@@ -1,6 +1,9 @@
 (* Ocamllex scanner for Kaji *)
 
-{ open Kajiparse }
+{ 
+  open Kajiparse 
+  open Scanf
+}
 
 let digit = ['0'-'9']
 let letter = ['a'-'z' 'A'-'Z']
@@ -44,7 +47,7 @@ rule token = parse
 | "false"  { BLIT(false) }
 | digit+ as lem  { LITERAL(int_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
-| '"'([^'"'])*'"' as lem { STRLIT(String.sub lem 1 (String.length lem - 2)) }
+| '"'([^'"'])*'"' as lem { STRLIT(Scanf.unescaped (String.sub lem 1 (String.length lem - 2))) }
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
