@@ -272,14 +272,48 @@ let translate (globals, functions) =
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         L.builder_at_end context end_bb
-      (*| SFor (var, li, body) ->
+      | SFor ((lt ,SId(var)), ls, body) ->
         let for_bb = L.append_block context "for" the_function in
-        let build_br_for = L.build_br for_bb in (* partial function *)
-        ignore (build_br_for builder);
-        let for_builder = L.builder_at_end context for_bb in *)
-        
+        let _ = L.build_br for_bb builder in
+        let for_builder = L.builder_at_end context for_bb in
 
+        let lp = build_expr for_builder ls in
+        let ip = L.build_alloca i32_t "index" for_builder in
+        let _ = L.build_store (L.const_int i32_t 0) ip for_builder in
+        let len = L.build_call listLen [| lp |] "len" for_builder in
 
+        let for_cond_bb = L.append_block context "for_cond" the_function in
+        let for_cond_builder = L.builder_at_end context for_cond_bb in
+        let build_br_for_cond = L.build_br for_cond_bb in (* partial function *)
+        ignore (build_br_for_cond for_builder);
+
+        let for_body_bb = L.append_block context "for_body" the_function in
+        let for_body_builder = L.builder_at_end context for_body_bb in 
+
+        let end_bb = L.append_block context "for_end" the_function in
+        let i_curr = L.build_load ip "i_curr" for_cond_builder in
+        let bool_val = L.build_icmp L.Icmp.Eq i_curr len "for_bool" for_cond_builder in
+        let _ = L.build_cond_br bool_val end_bb for_body_bb for_cond_builder in
+
+        let ep' = L.build_call indexList [| lp ; i_curr |] "" for_body_builder in
+        let pt = match lt with
+            | A.List(_) | A.Str -> L.pointer_type (ltype_of_typ lt)
+            | _ -> ltype_of_typ lt in
+        let ep = L.build_bitcast ep' (L.pointer_type pt) "" for_body_builder in
+        let ele_temp = L.build_load ep "_ele" for_body_builder in
+        let _ = L.build_store ele_temp (lookup var) for_body_builder in
+
+        let for_body_builder = build_stmt for_body_builder body in
+        let i_inc = L.build_add i_curr (L.const_int i32_t 1) "i_inc" for_body_builder in
+        let _ = L.build_store i_inc ip for_body_builder in
+        ignore (build_br_for_cond for_body_builder);
+
+        L.builder_at_end context end_bb
+
+      | SFor (_,_,_) ->
+        (* This should actually never be possible but I want
+         * the warnings to go away *)
+        builder
 
     in
     (* Build the code for each statement in the function *)

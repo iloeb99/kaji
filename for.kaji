@@ -1,0 +1,24 @@
+func int main() {
+	list<str> ls;
+	str s;
+	list<list<int>> l2;
+	list<int> lt;
+	int i;
+
+	ls = ["Hello", "there", "world!!"];
+
+	for s in ls {
+		printStr(s);
+	}
+
+
+	l2 = [[1,2,3],[],[5,6],[1,1,1,1,1,12]];
+
+	for lt in l2 {
+		for i in lt {
+			print(i-1);
+		}
+	}
+
+	return 0;
+}
