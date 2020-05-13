@@ -1,0 +1,19 @@
+func int main() {
+    str s;
+    str t;
+
+    s = "Hello World!";
+    
+	printStr(s);
+
+    substring(0, 5, s, t)
+	
+	printStr(t);
+
+    freeStr(s);
+    freeStr(t);
+
+    print(1);
+
+    return 0;
+}

@@ -45,3 +45,14 @@ char *getData(struct str *s)
 {
 	return s->data;
 }
+
+void subStr(int start, int end, const struct str *s, struct str *sub)
+{
+    int sublen = end - start;
+    if (sublen > 0) {
+        sub->length = sublen;
+        sub->data = malloc(sublen + 1 * sizeof(char));
+        strncpy(sub->data, s->data + start, end - start);
+        sub->data[sublen] = '\0';
+    }
+}

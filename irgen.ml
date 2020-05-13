@@ -79,6 +79,9 @@ let translate (globals, functions) =
   let getData_t : L.lltype = L.function_type (L.pointer_type i8_t) [| L.pointer_type struct_str_t |] in
   let getData : L.llvalue = L.declare_function "getData" getData_t the_module in
 
+  let subStr_t : L.lltype = L.function_type void_t [| i32_t; i32_t; L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
+  let subStr : L.llvalue = L.declare_function "subStr" subStr_t the_module in
+
   let initList_t : L.lltype =
     L.function_type void_t [| L.pointer_type struct_list_t |] in
   let initList : L.llvalue = L.declare_function "initList" initList_t the_module in
@@ -211,6 +214,12 @@ let translate (globals, functions) =
          let p = L.build_load (lookup s) "_str" builder in
          let r = L.build_call freeStr [| p |] "" builder in
          let _ = L.build_free p builder in r
+      | SCall ("subStr", [SLiteral(start) ; SLiteral(end) ; (_, SId(src)) ; (_, SId(dest))]) ->
+         let d = L.build_malloc struct_str_t "" builder in
+         let _ = L.build_call initStr [| d |] "" builder in
+         let _ = L.build_store d (lookup dest) builder in
+         let s = L.build_load (lookup src) "" builder in
+         L.build_call subStr [| start ; end ; d ; s |] "" builder
       | SCall ("freeList", [(_, SId(s))]) ->
         L.build_call freeList [| lookup s |] "" builder
       | SCall (f, args) ->
