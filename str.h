@@ -23,3 +23,5 @@ void subStr(int start, int end, const struct str *s, struct str *sub);
 int strLen(struct str *s);
 
 int strEq(struct str *s, struct str *t);
+
+struct str *concatStr(struct str *s1, struct str *s2);
