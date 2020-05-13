@@ -12,13 +12,15 @@ module StringMap = Map.Make(String)
 
 let check (globals, functions) =
 
-  (* Verify a list of bindings has no duplicate names *)
+  (* Verify a list of bindings has no duplicate names or voids *)
   let check_binds (kind : string) (binds : (typ * string) list) =
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
         raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
-      | _ :: t -> dups t
+      | (t, n) :: tl -> if t = Void
+                          then raise (Failure ("variable " ^ n ^ " cannot be of type Void"))
+                          else dups tl
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
 
