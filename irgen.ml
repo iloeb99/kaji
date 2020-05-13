@@ -234,7 +234,7 @@ let translate (globals, functions) =
          let s = L.build_load (lookup src) "" builder in
          let start' = build_expr builder start in
          let stop' = build_expr builder stop in
-         L.build_call subStr [| start' ; stop' ; d ; s |] "" builder
+         L.build_call subStr [| start' ; stop' ; s ; d |] "" builder
       | SCall ("freeList", [(_, SId(s))]) ->
         L.build_call freeList [| lookup s |] "" builder
       | SCall ("listLen", [lexpr]) ->
