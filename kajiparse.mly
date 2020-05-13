@@ -85,7 +85,7 @@ stmt:
   /* if (condition) stmt else stmt */
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7)   }
   | WHILE LPAREN expr RPAREN stmt        { While ($3, $5)   }
-  | FOR vdecl IN expr stmt               { For ($2, $4, $5) }
+  | FOR ID IN expr stmt               { For (Id($2), $4, $5) }
   /* return */
   | RETURN expr SEMI                     { Return $2        }
 

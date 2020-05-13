@@ -206,13 +206,14 @@ let check (globals, functions) =
         SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
       | While(e, st) ->
         SWhile(check_bool_expr e, check_stmt st)
-      | For((t, n), e, st) ->
-        let se = check_expr e in
-        let v = match se with
-            (List(Void), _) -> SFor((t,n), se, check_stmt st)
-          | (List(t'), _) -> if t = t' then SFor((t,n), se, check_stmt st) else raise(Failure "list type does not match iterator type")
-          | _ -> raise(Failure "cannot iterate through non-list type")
-        in v
+      | For(lv, e, st) -> begin match lv with
+        | Id(n) -> let se = check_expr e in
+                    let slv = check_expr lv in
+                    begin match se with
+                      | (List(Void), _) -> SFor(slv, se, check_stmt st)
+                      | (List(t'), _) -> if fst slv = t' then SFor(slv, se, check_stmt st) else raise(Failure "list type does not match iterator type")
+                      | _ -> raise(Failure "cannot iterate through non-list type") end
+        | _     -> raise(Failure "For loop must contain iterator variable") end
       | Return e ->
         let (t, e') = check_expr e in
         if t = func.rtyp then SReturn (t, e')
