@@ -1,6 +1,7 @@
 func int main() {
     str s;
     str t;
+	str u;
 
     s = "Hello!";
     t = "Goodbye!";
@@ -10,7 +11,11 @@ func int main() {
 	printStr(t);
 	print(strLen(t));
 
+	u = concatStr(s,t);
+	printStr(u);
+
     freeStr(s);
+	freeStr(u);
     s = t;
 
 	if(strEq(s,t)) {
