@@ -7,15 +7,15 @@ func int main() {
 
 	ls = ["Hello", "there", "world!!"];
 
-	for s in ls {
+	for (s in ls) {
 		printStr(s);
 	}
 
 
 	l2 = [[1,2,3],[],[5,6],[1,1,1,1,1,12]];
 
-	for lt in l2 {
-		for i in lt {
+	for (lt in l2) {
+		for (i in lt) {
 			print(i-1);
 		}
 	}
