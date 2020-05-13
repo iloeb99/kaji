@@ -15,3 +15,5 @@ TODO
 - Disallow declaration of list<void> by user?
 
 - guard against doing the binops with non-int types
+
+- list+string length
