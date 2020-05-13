@@ -79,6 +79,9 @@ let translate (globals, functions) =
   let printStr_t : L.lltype = L.function_type i32_t [| L.pointer_type struct_str_t |] in
   let printStr : L.llvalue = L.declare_function "printStr" printStr_t the_module in
 
+  let fprintStr_t : L.lltype = L.function_type i32_t [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t ; i32_t |] in
+  let fprintStr : L.llvalue = L.declare_function "fprintStr" fprintStr_t the_module in
+
   let strLen : L.llvalue = L.declare_function "listLen" printStr_t the_module in
 
   let getData_t : L.lltype = L.function_type (L.pointer_type i8_t) [| L.pointer_type struct_str_t |] in
@@ -212,6 +215,8 @@ let translate (globals, functions) =
           "printf" builder
       | SCall ("printStr", [e]) ->
         L.build_call printStr [| (build_expr builder e) |] "_printstr" builder
+      | SCall ("fprintStr", [f ; s ; a]) ->
+        L.build_call fprintStr [| build_expr builder f ; build_expr builder s ; build_expr builder a |] "_fprintStr" builder
       | SCall ("copyStr", [(_, SId(dest)) ; (_, SId(src))]) ->
          let d = L.build_malloc struct_str_t "" builder in
          let _ = L.build_call initStr [| d |] "" builder in

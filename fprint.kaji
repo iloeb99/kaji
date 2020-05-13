@@ -1,0 +1,14 @@
+func int main() {
+    str s;
+    s = "This should be at beginning of file. ";
+
+    printStr("Writing to tmp.txt...");
+    fprintStr("tmp.txt", s, 0);
+    printStr("Done.");
+
+    printStr("Appending to tmp.txt...");
+    fprintStr("tmp.txt", "This should be at end of file.", 1);
+    printStr("Done.");
+
+    return 0;
+}

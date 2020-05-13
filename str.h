@@ -14,6 +14,8 @@ void copyStr(struct str *dest, struct str *src);
 
 int printStr(struct str *s);
 
+int fprintStr(struct str *f, struct str *s, int append);
+
 char *getData(struct str *s);
 
 void subStr(int start, int end, const struct str *s, struct str *sub);

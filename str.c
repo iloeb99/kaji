@@ -41,6 +41,23 @@ int printStr(struct str *s)
     return printf("%s\n", s->data);
 }
 
+int fprintStr(struct str *f, struct str *s, int append)
+{
+    FILE *fp;
+    char *flag;
+
+    if (append)
+        flag = "a";
+    else
+        flag = "w";
+
+    fp = fopen(f->data, flag);
+    fputs(s->data, fp);
+    fclose(fp);
+
+    return 0;
+}
+
 char *getData(struct str *s)
 {
     return s->data;

@@ -35,6 +35,12 @@ let check (globals, functions) =
       fname = "printStr";
       formals = [(Str, "s")];
       locals = []; body = [] } StringMap.empty
+  in let built_in_decls = 
+    StringMap.add "fprintStr" {
+      rtyp = Int;
+      fname = "fprintStr";
+      formals = [(Str, "f") ; (Str, "s") ; (Int, "a")];
+      locals = []; body = [] } built_in_decls
   in let built_in_decls =
     StringMap.add "print" {
       rtyp = Int;
