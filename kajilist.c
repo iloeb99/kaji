@@ -18,18 +18,6 @@ void freeList(struct list *l)
     }
 }
 
-struct list *assignList(struct list *l, void **vals, int len)
-{
-    freeList(l);
-
-    l->length = len;
-    l->capacity = len;
-    l->data = malloc(len * sizeof(void *));
-    memcpy(l->data, vals, len * sizeof(void *));
-
-    return l;
-}
-
 void expandList(struct list *l, int n)
 {
     l->capacity += n;

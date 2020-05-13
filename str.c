@@ -58,11 +58,6 @@ int fprintStr(struct str *f, struct str *s, int append)
     return 0;
 }
 
-char *getData(struct str *s)
-{
-    return s->data;
-}
-
 void subStr(int start, int end, const struct str *s, struct str *sub)
 {
     int sublen = end - start;

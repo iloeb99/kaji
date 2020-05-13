@@ -83,11 +83,10 @@ stmt:
   | LBRACE stmt_list RBRACE              { Block $2         }
   /* if (condition) { block1} else {block2} */
   /* if (condition) stmt else stmt */
-  | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7)   }
-  | WHILE LPAREN expr RPAREN stmt        { While ($3, $5)   }
-  | FOR ID IN expr stmt               { For (Id($2), $4, $5) }
-  /* return */
-  | RETURN expr SEMI                     { Return $2        }
+  | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7)       }
+  | WHILE LPAREN expr RPAREN stmt        { While ($3, $5)       }
+  | FOR LPAREN ID IN expr RPAREN stmt    { For (Id($3), $5, $7) }
+  | RETURN expr SEMI                     { Return $2            }
 
 expr:
     LITERAL                    { Literal($1)          }
