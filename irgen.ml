@@ -87,6 +87,10 @@ let translate (globals, functions) =
   let subStr_t : L.lltype = L.function_type void_t [| i32_t; i32_t; L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
   let subStr : L.llvalue = L.declare_function "subStr" subStr_t the_module in
 
+  let concatStr_t : L.lltype = L.function_type (L.pointer_type struct_str_t) 
+                            [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
+  let concatStr : L.llvalue = L.declare_function "concatStr" concatStr_t the_module in
+
   let initList_t : L.lltype =
     L.function_type void_t [| L.pointer_type struct_list_t |] in
   let initList : L.llvalue = L.declare_function "initList" initList_t the_module in
@@ -233,6 +237,8 @@ let translate (globals, functions) =
          let start' = build_expr builder start in
          let stop' = build_expr builder stop in
          L.build_call subStr [| start' ; stop' ; s ; d |] "" builder
+      | SCall ("concatStr", [e1 ; e2]) ->
+        
       | SCall ("freeList", [(_, SId(s))]) ->
         L.build_call freeList [| lookup s |] "" builder
       | SCall ("listLen", [lexpr]) ->

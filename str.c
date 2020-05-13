@@ -78,3 +78,13 @@ int strEq(struct str *s, struct str *t)
 {
     return strcmp(s->data, t->data);
 }
+
+struct str *concatStr(struct str *s1, struct str *s2)
+{
+    struct str *res = (struct str *) malloc(sizeof(struct str));
+    char con[s1->length + s2->length + 1];
+    strcat(con, s1->data);
+    strcat(con, s2->data);
+    res = assignStr(res, con);
+    return res;
+}
