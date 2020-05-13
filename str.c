@@ -31,25 +31,26 @@ struct str *assignStr(struct str *s, char *val)
 
 void copyStr(struct str *dest, struct str *src)
 {
-	dest->data = malloc((src->length + 1) * sizeof(char));
-	dest->length = src->length;
-	strcpy(dest->data, src->data);
+    dest->data = malloc((src->length + 1) * sizeof(char));
+    dest->length = src->length;
+    strcpy(dest->data, src->data);
 }
 
 int printStr(struct str *s)
 {
-	return printf("%s\n", s->data);
+    return printf("%s\n", s->data);
 }
 
 char *getData(struct str *s)
 {
-	return s->data;
+    return s->data;
 }
 
 void subStr(int start, int end, const struct str *s, struct str *sub)
 {
     int sublen = end - start;
-    if (sublen > 0) {
+    if (sublen > 0)
+    {
         sub->length = sublen;
         sub->data = malloc(sublen + 1 * sizeof(char));
         strncpy(sub->data, s->data + start, end - start);
@@ -58,10 +59,10 @@ void subStr(int start, int end, const struct str *s, struct str *sub)
 }
 int strLen(struct str *s)
 {
-	return s->length;
+    return s->length;
 }
 
 int strEq(struct str *s, struct str *t)
 {
-	return strcmp(s->data, t->data);
+    return strcmp(s->data, t->data);
 }
