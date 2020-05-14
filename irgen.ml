@@ -220,11 +220,6 @@ let translate (globals, functions) =
          let p = L.build_load (lookup s) "_str" builder in
          let r = L.build_call freeStr [| p |] "" builder in
          let _ = L.build_free p builder in r
-      (* | SCall ("subStr", [start ; stop ; (_, SId(src)) ; (_, SId(dest))]) ->
-         let d = L.build_malloc struct_str_t "" builder in
-         let _ = L.build_call initStr [| d |] "" builder in
-         let _ = L.build_store d (lookup dest) builder in
-         let s = L.build_load (lookup src) "" builder in *)
       | SCall ("subStr", [start ; stop ; e]) ->
          let e = build_expr builder e in
          let start' = build_expr builder start in
