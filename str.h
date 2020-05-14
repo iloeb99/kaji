@@ -16,7 +16,7 @@ int printStr(struct str *s);
 
 int fprintStr(struct str *f, struct str *s, int append);
 
-void subStr(int start, int end, const struct str *s, struct str *sub);
+struct str *subStr(int start, int end, const struct str *s);
 
 int strLen(struct str *s);
 

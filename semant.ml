@@ -81,7 +81,7 @@ let check (globals, functions) =
     StringMap.add "subStr" {
       rtyp = Void;
       fname = "subStr";
-      formals = [(Int, "start") ; (Int, "stop") ; (Str, "src") ; (Str, "dest")];
+      formals = [(Int, "start") ; (Int, "stop") ; (Str, "src")];
       locals = []; body = [] } built_in_decls
   in let built_in_decls = 
     StringMap.add "scrape" {

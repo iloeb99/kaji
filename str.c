@@ -58,8 +58,10 @@ int fprintStr(struct str *f, struct str *s, int append)
     return 0;
 }
 
-void subStr(int start, int end, const struct str *s, struct str *sub)
+struct str *subStr(int start, int end, const struct str *s)
 {
+    struct str *sub = (struct str *) malloc(sizeof(struct str));
+    initStr(sub);
     int sublen = end - start;
     if (sublen > 0)
     {
@@ -68,6 +70,7 @@ void subStr(int start, int end, const struct str *s, struct str *sub)
         strncpy(sub->data, s->data + start, end - start);
         sub->data[sublen] = '\0';
     }
+    return sub;
 }
 int strLen(struct str *s)
 {
