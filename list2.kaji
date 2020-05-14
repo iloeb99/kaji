@@ -1,27 +1,20 @@
 func int main() {
-	list<int> ls;
 	list<str> l2;
-	int i;
-	int j;
 	str s;
+	str t;
 
 	s = "heelo";
-	ls = [1,2,3];
 	l2 = ["I", "am", "legend"];
-	i = 5;
-	appendList(ls, 9);
 
-	for(j in ls) {
-		print(j);
-	}
-	appendList(ls, i);
-	
-	printStr("\n\n");
-	for(j in ls) {
-		print(j);
+	for(t in l2) {
+		printStr(t);
 	}
 
-	//setElem(l2, 1, s);
+	setElem(l2, 1, s);
+
+	for(t in l2) {
+		printStr(t);
+	}
 
 	return 0;
 }
