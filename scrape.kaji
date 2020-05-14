@@ -1,0 +1,9 @@
+func int main() {
+    str res;
+
+    res = scrape("verigu.github.io/4115Spring2020");
+
+    fprintStr("get_output.txt", res, 0);
+
+    return 0;
+}
