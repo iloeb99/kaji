@@ -1,3 +1,4 @@
+#include "str.h"
 #include <stdlib.h>
 
-struct str get(const char *);
+struct str *get(struct str *url_struct);

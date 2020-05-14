@@ -45,14 +45,16 @@ void cacert(CURL *curl)
   }
 }
 
-struct str get(const char *url)
+struct str *get(struct str *url_struct)
 {
   {
     CURL *curl;
     CURLcode res;
-    struct str out;
+	char *url;
+    struct str *out;
 
-    initStr(&out);
+	url = url_struct->data;
+    initStr(out);
 
     curl = curl_easy_init();
     if(curl != NULL) {
@@ -61,7 +63,7 @@ struct str get(const char *url)
       curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
       cacert(curl);
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_string);
-      curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
+      curl_easy_setopt(curl, CURLOPT_WRITEDATA, out);
 
       /* Perform the request, res will get the return code */
       res = curl_easy_perform(curl);

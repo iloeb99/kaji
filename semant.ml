@@ -83,6 +83,12 @@ let check (globals, functions) =
       fname = "subStr";
       formals = [(Int, "start") ; (Int, "stop") ; (Str, "src") ; (Str, "dest")];
       locals = []; body = [] } built_in_decls
+  in let built_in_decls = 
+    StringMap.add "scrape" {
+      rtyp = Str;
+      fname = "srape";
+      formals = [(Str, "url")];
+      locals = []; body = [] } built_in_decls
   in
 
 
