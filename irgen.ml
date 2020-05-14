@@ -237,6 +237,15 @@ let translate (globals, functions) =
       | SCall ("listLen", [lexpr]) ->
         let lp = build_expr builder lexpr in
         L.build_call listLen [| lp |] "" builder
+      | SCall ("appendList", [ls ; e]) ->
+          let ls' = build_expr builder ls in
+          let s' = match e with
+              | (A.Str, _) -> L.build_malloc (L.pointer_type struct_str_t) "" builder
+              | (A.List(_), _) -> L.build_malloc (L.pointer_type struct_list_t) "" builder
+              | _ -> L.build_malloc (ltype_of_typ (fst e)) "" builder
+          in let _ = L.build_store (build_expr builder e) s' builder in
+          let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
+          in L.build_call appendList [| ls' ; s'' |] "" builder
       | SCall ("strLen", [exp]) ->
         let sp = build_expr builder exp in
         L.build_call strLen [| sp |] "" builder

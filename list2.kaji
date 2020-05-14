@@ -2,6 +2,7 @@ func int main() {
 	list<int> ls;
 	list<str> l2;
 	int i;
+	int j;
 	str s;
 
 	s = "heelo";
@@ -10,7 +11,17 @@ func int main() {
 	i = 5;
 	appendList(ls, 9);
 
-	setElem(l2, 1, s);
+	for(j in ls) {
+		print(j);
+	}
+	appendList(ls, i);
+	
+	printStr("\n\n");
+	for(j in ls) {
+		print(j);
+	}
+
+	//setElem(l2, 1, s);
 
 	return 0;
 }

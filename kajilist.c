@@ -45,6 +45,17 @@ void appendList(struct list *l, void *val)
     l->length++;
 }
 
+void setElem(struct list *l, int i, void *val)
+{
+	if (i < 0 || i >= l->length)
+	{
+		return;
+	}
+
+	free(l->data[i]);
+	l->data[i] = val;
+}
+
 void *indexList(struct list *l, int i)
 {
     if (i < 0 || i >= l->length)

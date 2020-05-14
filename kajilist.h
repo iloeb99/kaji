@@ -15,4 +15,6 @@ int listLen(struct list *l);
 
 void appendList(struct list *l, void *val);
 
+void setElem(struct list *l, int i, void *val);
+
 void *indexList(struct list *l, int i);
