@@ -1,0 +1,9 @@
+*.native                                                                                                                                                              
+_build                                                                                                                                                               
+*.o
+*.s
+*.byte
+exe
+**/llvm.out*
+a.out
+*.a

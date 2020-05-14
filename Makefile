@@ -3,7 +3,7 @@ CFlags= -g -Wall
 LDFlags= -g
 LDLIBS= -lcurl
 
-default: kaji.native libstd.a
+default: clean kaji.native libstd.a
 
 kaji.native: kaji.ml ast.ml scanner.mll kajiparse.mly sast.ml semant.ml irgen.ml
 	ocamlbuild -use-ocamlfind -pkgs llvm kaji.native
@@ -23,7 +23,4 @@ clean:
 	ocamlbuild -clean 2>/dev/null
 	rm -f *.native
 	rm -rf _build
-	rm -rf *.o *.s *.byte exe llvm.out a.out *.a
-
-.PHONY: all
-all: clean default
+	rm -rf *.o *.s *.byte exe */llvm.out* a.out *.a
