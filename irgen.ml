@@ -227,11 +227,14 @@ let translate (globals, functions) =
          let e1' = build_expr builder e1 in
          let e2' = build_expr builder e2 in
          L.build_call concatStr [| e1' ; e2' |] "c_ret" builder
-      | SCall ("initList", [e]) ->
-         let e' = build_expr builder e in
-         L.build_call initList [| e' |] "" builder
+      | SCall ("initList", [(_, SId(s))]) ->
+         let ls = L.build_malloc struct_list_t "" builder in
+         let _ = L.build_store ls (lookup s) builder in
+         L.build_call initList [| ls |] "" builder
       | SCall ("freeList", [(_, SId(s))]) ->
-        L.build_call freeList [| lookup s |] "" builder
+         let p = L.build_load (lookup s) "" builder in
+         let r = L.build_call freeList [| p |] "" builder in
+         let _ = L.build_free p builder in r
       | SCall ("listLen", [lexpr]) ->
         let lp = build_expr builder lexpr in
         L.build_call listLen [| lp |] "" builder
