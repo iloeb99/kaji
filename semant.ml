@@ -86,7 +86,7 @@ let check (globals, functions) =
   in let built_in_decls = 
     StringMap.add "scrape" {
       rtyp = Str;
-      fname = "srape";
+      fname = "scrape";
       formals = [(Str, "url")];
       locals = []; body = [] } built_in_decls
   in
