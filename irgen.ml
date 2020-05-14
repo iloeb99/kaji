@@ -226,11 +226,11 @@ let translate (globals, functions) =
          let _ = L.build_store d (lookup dest) builder in
          let s = L.build_load (lookup src) "" builder in *)
       | SCall ("subStr", [start ; stop ; e]) ->
-         let e = build_expr builder e1 in
+         let e = build_expr builder e in
          let start' = build_expr builder start in
          let stop' = build_expr builder stop in
          L.build_call subStr [| start' ; stop' ; e|] "" builder
-      | SCall ("concatStr", [e ; e2]) ->
+      | SCall ("concatStr", [e1 ; e2]) ->
          let e1' = build_expr builder e1 in
          let e2' = build_expr builder e2 in
          L.build_call concatStr [| e1' ; e2' |] "c_ret" builder
