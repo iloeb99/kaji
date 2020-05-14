@@ -35,7 +35,7 @@ let check (globals, functions) =
       fname = "printStr";
       formals = [(Str, "s")];
       locals = []; body = [] } StringMap.empty
-  in let built_in_decls = 
+  in let built_in_decls =
     StringMap.add "fprintStr" {
       rtyp = Int;
       fname = "fprintStr";
@@ -89,19 +89,19 @@ let check (globals, functions) =
       fname = "concatStr";
       formals = [(Str, "s") ; (Str, "t")];
       locals = []; body = [] } built_in_decls
-  in let built_in_decls = 
+  in let built_in_decls =
     StringMap.add "subStr" {
-      rtyp = Void;
+      rtyp = Str;
       fname = "subStr";
       formals = [(Int, "start") ; (Int, "stop") ; (Str, "src")];
       locals = []; body = [] } built_in_decls
-  in let built_in_decls = 
+  in let built_in_decls =
     StringMap.add "scrape" {
       rtyp = Str;
       fname = "scrape";
       formals = [(Str, "url")];
       locals = []; body = [] } built_in_decls
-  in let built_in_decls = 
+  in let built_in_decls =
     StringMap.add "appendList" {
       rtyp = Void;
       fname = "appendList";
@@ -109,7 +109,7 @@ let check (globals, functions) =
        * there's a special case in check_func *)
       formals = [(Int, "i") ; (Int, "j")];
       locals = []; body = [] } built_in_decls
-  in let built_in_decls = 
+  in let built_in_decls =
     StringMap.add "setElem" {
       rtyp = Void;
       fname = "setElem";

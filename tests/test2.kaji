@@ -1,0 +1,48 @@
+func str getTimezone(str url) {
+    return subStr(14, 18, scrape(url));
+}
+
+func str getTime(str url) {
+    return subStr(11, 19, scrape(url));
+}
+
+func str getISODatetime(str url) {
+    return subStr(54, 86, scrape(url));
+}
+
+func int printDateTime(str url, str label) {
+    list<str> toConcat;
+    str out;
+    str s;
+
+    out = "\n";
+    toConcat = [label, " Time: ", getTime(url), "\n",
+                label, " ISO Format Datetime: ", getISODatetime(url), "\n"];
+
+    for (s in toConcat) {
+      out = concatStr(out, s);
+    }
+
+    printStr(out);
+    freeStr(out);
+    return 0;
+}
+
+
+func int main() {
+    str ny_url;
+    str local_url;
+    ny_url = "http://worldtimeapi.org/api/timezone/America/New_York.txt";
+    local_url = "http://worldtimeapi.org/api/ip.txt";
+
+    printDateTime("http://worldtimeapi.org/api/timezone/America/New_York.txt", "NY");
+    printDateTime("http://worldtimeapi.org/api/ip.txt", "Local");
+
+    if(strEq(getTimezone(ny_url), getTimezone(local_url))) {
+      printStr("Based on your public IP address, you are in the same timezone as New York.");
+    } else {
+      printStr("Based on your public IP address, you are not in the same timezone as New York.");
+    }
+
+    return 0;
+}
