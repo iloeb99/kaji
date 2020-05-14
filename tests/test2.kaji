@@ -3,7 +3,7 @@ func str getTimezone(str url) {
 }
 
 func str getTime(str url) {
-    return subStr(11, 19, scrape(url));
+    return subStr(65, 73, scrape(url));
 }
 
 func str getISODatetime(str url) {
