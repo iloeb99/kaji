@@ -60,13 +60,13 @@ int fprintStr(struct str *f, struct str *s, int append)
 
 struct str *subStr(int start, int end, const struct str *s)
 {
-    struct str *sub = (struct str *) malloc(sizeof(struct str));
+    struct str *sub = (struct str *)malloc(sizeof(struct str));
     initStr(sub);
     int sublen = end - start;
     if (sublen > 0)
     {
         char subarr[sublen + 1];
-        strncpy(subarr, s->data+start, sublen);
+        strncpy(subarr, s->data + start, sublen);
         subarr[sublen] = '\0';
         sub = assignStr(sub, subarr);
     }
@@ -84,7 +84,7 @@ int strEq(struct str *s, struct str *t)
 
 struct str *concatStr(struct str *s1, struct str *s2)
 {
-    struct str *res = (struct str *) malloc(sizeof(struct str));
+    struct str *res = (struct str *)malloc(sizeof(struct str));
     initStr(res);
     char con[s1->length + s2->length + 1];
     strcpy(con, s1->data);

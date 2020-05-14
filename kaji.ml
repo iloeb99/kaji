@@ -25,15 +25,15 @@ let () =
   match !action with
     Ast -> print_string (Ast.string_of_program ast)
   | _ -> let sast = Semant.check ast in
-        let llvm_module = Llvm.string_of_llmodule (Irgen.translate sast) in 
+    let llvm_module = Llvm.string_of_llmodule (Irgen.translate sast) in 
     match !action with
       Ast     -> ()
     | Sast    -> print_string (Sast.string_of_sprogram sast)
     | LLVM_IR -> print_string (Llvm.string_of_llmodule (Irgen.translate sast))
     | Exec -> let out = open_out "llvm.out" in
-                fprintf out "%s\n" llvm_module; close_out out;
-                if (command "llc -relocation-model=pic llvm.out" != 0)
-                then raise (Failure "llc: non-zero exit code")
-                else if ((command "gcc llvm.out.s -L./ -lstd -lcurl -o a.out" ) != 0)
-                then raise (Failure "gcc: non-zero exit code")
-                else ()
+      fprintf out "%s\n" llvm_module; close_out out;
+      if (command "llc -relocation-model=pic llvm.out" != 0)
+      then raise (Failure "llc: non-zero exit code")
+      else if ((command "gcc llvm.out.s -L./ -lstd -lcurl -o a.out" ) != 0)
+      then raise (Failure "gcc: non-zero exit code")
+      else ()

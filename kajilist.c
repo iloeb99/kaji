@@ -31,7 +31,7 @@ void expandList(struct list *l, int n)
 
 int listLen(struct list *l)
 {
-	return l->length;
+    return l->length;
 }
 
 void appendList(struct list *l, void *val)
@@ -47,13 +47,13 @@ void appendList(struct list *l, void *val)
 
 void setElem(struct list *l, int i, void *val)
 {
-	if (i < 0 || i >= l->length)
-	{
-		return;
-	}
+    if (i < 0 || i >= l->length)
+    {
+        return;
+    }
 
-	free(l->data[i]);
-	l->data[i] = val;
+    free(l->data[i]);
+    l->data[i] = val;
 }
 
 void *indexList(struct list *l, int i)

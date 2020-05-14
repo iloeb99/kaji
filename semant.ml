@@ -19,15 +19,14 @@ let check (globals, functions) =
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
         raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
       | (t, n) :: tl -> if t = Void
-                          then raise (Failure ("variable " ^ n ^ " cannot be of type Void"))
-                          else dups tl
+        then raise (Failure ("variable " ^ n ^ " cannot be of type Void"))
+        else dups tl
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
 
   (* Make sure no globals duplicate *)
   check_binds "global" globals;
 
-  (* TODO: ADD BUILT-IN FUNCS *)
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     StringMap.add "printStr" {
@@ -36,87 +35,87 @@ let check (globals, functions) =
       formals = [(Str, "s")];
       locals = []; body = [] } StringMap.empty
   in let built_in_decls =
-    StringMap.add "fprintStr" {
-      rtyp = Int;
-      fname = "fprintStr";
-      formals = [(Str, "f") ; (Str, "s") ; (Int, "a")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "fprintStr" {
+         rtyp = Int;
+         fname = "fprintStr";
+         formals = [(Str, "f") ; (Str, "s") ; (Int, "a")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "print" {
-      rtyp = Int;
-      fname = "print";
-      formals = [(Int, "x")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "print" {
+         rtyp = Int;
+         fname = "print";
+         formals = [(Int, "x")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "freeStr" {
-      rtyp = Void;
-      fname = "freeStr";
-      formals = [(Str, "s")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "freeStr" {
+         rtyp = Void;
+         fname = "freeStr";
+         formals = [(Str, "s")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "strLen" {
-      rtyp = Int;
-      fname = "strLen";
-      formals = [(Str, "s")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "strLen" {
+         rtyp = Int;
+         fname = "strLen";
+         formals = [(Str, "s")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "listLen" {
-      rtyp = Int;
-      fname = "listLen";
-      formals = [(List(Void), "ls")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "listLen" {
+         rtyp = Int;
+         fname = "listLen";
+         formals = [(List(Void), "ls")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "freeList" {
-      rtyp = Void;
-      fname = "freeList";
-      formals = [(List(Void), "ls")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "freeList" {
+         rtyp = Void;
+         fname = "freeList";
+         formals = [(List(Void), "ls")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "initList" {
-      rtyp = Void;
-      fname = "initList";
-      formals = [(List(Void), "ls")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "initList" {
+         rtyp = Void;
+         fname = "initList";
+         formals = [(List(Void), "ls")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "strEq" {
-      rtyp = Bool;
-      fname = "strEq";
-      formals = [(Str, "s") ; (Str, "t")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "strEq" {
+         rtyp = Bool;
+         fname = "strEq";
+         formals = [(Str, "s") ; (Str, "t")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "concatStr" {
-      rtyp = Str;
-      fname = "concatStr";
-      formals = [(Str, "s") ; (Str, "t")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "concatStr" {
+         rtyp = Str;
+         fname = "concatStr";
+         formals = [(Str, "s") ; (Str, "t")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "subStr" {
-      rtyp = Str;
-      fname = "subStr";
-      formals = [(Int, "start") ; (Int, "stop") ; (Str, "src")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "subStr" {
+         rtyp = Str;
+         fname = "subStr";
+         formals = [(Int, "start") ; (Int, "stop") ; (Str, "src")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "scrape" {
-      rtyp = Str;
-      fname = "scrape";
-      formals = [(Str, "url")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "scrape" {
+         rtyp = Str;
+         fname = "scrape";
+         formals = [(Str, "url")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "appendList" {
-      rtyp = Void;
-      fname = "appendList";
-      (* these formals are dummy values
-       * there's a special case in check_func *)
-      formals = [(Int, "i") ; (Int, "j")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "appendList" {
+         rtyp = Void;
+         fname = "appendList";
+         (* these formals are dummy values
+          * there's a special case in check_func *)
+         formals = [(Int, "i") ; (Int, "j")];
+         locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "setElem" {
-      rtyp = Void;
-      fname = "setElem";
-      (* these formals are dummy values
-       * there's a special case in check_func *)
-      formals = [(Int, "i") ; (Int, "j") ; (Int, "k")];
-      locals = []; body = [] } built_in_decls
+       StringMap.add "setElem" {
+         rtyp = Void;
+         fname = "setElem";
+         (* these formals are dummy values
+          * there's a special case in check_func *)
+         formals = [(Int, "i") ; (Int, "j") ; (Int, "k")];
+         locals = []; body = [] } built_in_decls
   in
 
 
@@ -154,9 +153,9 @@ let check (globals, functions) =
     let rec check_assign lvaluet rvaluet err =
       match lvaluet with
         List(t) -> begin match rvaluet with
-            | Void -> lvaluet
-            | List(t') -> if t = Void then rvaluet else check_assign t t' err
-            | _  -> raise (Failure err) end
+          | Void -> lvaluet
+          | List(t') -> if t = Void then rvaluet else check_assign t t' err
+          | _  -> raise (Failure err) end
       | _ -> if rvaluet = Void || lvaluet = rvaluet then lvaluet else raise (Failure err)
     in
 
@@ -182,12 +181,12 @@ let check (globals, functions) =
           | _ -> t1 = t2
 
         in let rec check = function
-            (t1, _) :: (t2, e2) :: tail ->
-            if (check' t1 t2) then
-              check ((t2, e2)::tail)
-            else raise (Failure "list contains inconsistent types")
-          | (t, _) :: tail -> List(t)
-          | _ -> List(Void)
+              (t1, _) :: (t2, e2) :: tail ->
+              if (check' t1 t2) then
+                check ((t2, e2)::tail)
+              else raise (Failure "list contains inconsistent types")
+            | (t, _) :: tail -> List(t)
+            | _ -> List(Void)
         in
         let sl = List.map check_expr l in (check sl, SListLit sl)
 
@@ -195,13 +194,13 @@ let check (globals, functions) =
       | Index(e, i) ->
         let dex = check_expr i in
         if fst dex <> Int then
-            raise (Failure "index must be of type Int")
+          raise (Failure "index must be of type Int")
         else
-            let (t, e') = check_expr e in
-            let st = match t with
-                List(t') -> t'
-              | _ -> raise (Failure ("cannot index non list type"))
-            in (st, SIndex((t, e'), dex))
+          let (t, e') = check_expr e in
+          let st = match t with
+              List(t') -> t'
+            | _ -> raise (Failure ("cannot index non list type"))
+          in (st, SIndex((t, e'), dex))
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var
         and (rt, e') = check_expr e in
@@ -237,21 +236,21 @@ let check (globals, functions) =
                           " arguments in " ^ string_of_expr call))
         else begin match fname with
           | "appendList" -> let args' = List.map check_expr args in
-                            begin match args' with
-                              [(List(t), _) ; (t2, _)] when t = t2 -> (Void, SCall(fname, args'))
-                            | _ -> raise (Failure ("appendList() argument types do not match")) end
+            begin match args' with
+                [(List(t), _) ; (t2, _)] when t = t2 -> (Void, SCall(fname, args'))
+              | _ -> raise (Failure ("appendList() argument types do not match")) end
           | "setElem" -> let args' = List.map check_expr args in
-                         begin match args' with
-                           [(List(t), _) ; (Int, _) ; (t2, _)] when t = t2 -> (Void, SCall(fname, args'))
-                         | _ -> raise (Failure ("setElem() argument types do not match")) end
+            begin match args' with
+                [(List(t), _) ; (Int, _) ; (t2, _)] when t = t2 -> (Void, SCall(fname, args'))
+              | _ -> raise (Failure ("setElem() argument types do not match")) end
           | _ -> let check_call (ft, _) e =
-                      let (et, e') = check_expr e in
-                      let err = "illegal argument found " ^ string_of_typ et ^
-                                " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-                      in (check_assign ft et err, e')
-                 in
-                 let args' = List.map2 check_call fd.formals args
-                 in (fd.rtyp, SCall(fname, args')) end
+                   let (et, e') = check_expr e in
+                   let err = "illegal argument found " ^ string_of_typ et ^
+                             " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+                   in (check_assign ft et err, e')
+            in
+            let args' = List.map2 check_call fd.formals args
+            in (fd.rtyp, SCall(fname, args')) end
     in
 
     let check_bool_expr e =
@@ -276,13 +275,13 @@ let check (globals, functions) =
       | While(e, st) ->
         SWhile(check_bool_expr e, check_stmt st)
       | For(lv, e, st) -> begin match lv with
-        | Id(n) -> let se = check_expr e in
-                    let slv = check_expr lv in
-                    begin match se with
-                      | (List(Void), _) -> SFor(slv, se, check_stmt st)
-                      | (List(t'), _) -> if fst slv = t' then SFor(slv, se, check_stmt st) else raise(Failure "list type does not match iterator type")
-                      | _ -> raise(Failure "cannot iterate through non-list type") end
-        | _     -> raise(Failure "For loop must contain iterator variable") end
+          | Id(n) -> let se = check_expr e in
+            let slv = check_expr lv in
+            begin match se with
+              | (List(Void), _) -> SFor(slv, se, check_stmt st)
+              | (List(t'), _) -> if fst slv = t' then SFor(slv, se, check_stmt st) else raise(Failure "list type does not match iterator type")
+              | _ -> raise(Failure "cannot iterate through non-list type") end
+          | _     -> raise(Failure "For loop must contain iterator variable") end
       | Return e ->
         let (t, e') = check_expr e in
         if t = func.rtyp then SReturn (t, e')

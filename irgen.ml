@@ -25,10 +25,10 @@ let translate (globals, functions) =
   (* Declare struct str *)
   let struct_str_t : L.lltype =
     L.named_struct_type context "str" in
-    
+
   let _ =
     L.struct_set_body struct_str_t
-    [| L.pointer_type i8_t ; i32_t |] false in
+      [| L.pointer_type i8_t ; i32_t |] false in
 
   (* Declare struct list *)
   let struct_list_t : L.lltype = 
@@ -36,7 +36,7 @@ let translate (globals, functions) =
 
   let _ = 
     L.struct_set_body struct_list_t
-    [| L.pointer_type i8_t ; i32_t ; i32_t |] false in
+      [| L.pointer_type i8_t ; i32_t ; i32_t |] false in
 
   (* Return the LLVM type for a Kaji type *)
   let ltype_of_typ = function
@@ -67,7 +67,7 @@ let translate (globals, functions) =
   let freeStr : L.llvalue = L.declare_function "freeStr" initStr_t the_module in
 
   let assignStr_t : L.lltype = L.function_type (L.pointer_type struct_str_t) 
-    [| L.pointer_type struct_str_t ; L.pointer_type i8_t |] in
+      [| L.pointer_type struct_str_t ; L.pointer_type i8_t |] in
   let assignStr : L.llvalue = L.declare_function "assignStr" assignStr_t the_module in
 
   let strEq_t : L.lltype = L.function_type i32_t [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
@@ -85,7 +85,7 @@ let translate (globals, functions) =
   let subStr : L.llvalue = L.declare_function "subStr" subStr_t the_module in
 
   let concatStr_t : L.lltype = L.function_type (L.pointer_type struct_str_t) 
-                            [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
+      [| L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
   let concatStr : L.llvalue = L.declare_function "concatStr" concatStr_t the_module in
 
   let initList_t : L.lltype =
@@ -98,14 +98,14 @@ let translate (globals, functions) =
   let listLen : L.llvalue = L.declare_function "listLen" listLen_t the_module in
 
   let appendList_t : L.lltype = L.function_type void_t
-    [| L.pointer_type struct_list_t ; L.pointer_type i8_t |] in
+      [| L.pointer_type struct_list_t ; L.pointer_type i8_t |] in
   let appendList : L.llvalue = L.declare_function "appendList" appendList_t the_module in
 
   let setElem_t : L.lltype = L.function_type void_t [| L.pointer_type struct_list_t ; i32_t ; L.pointer_type i8_t |] in
   let setElem : L.llvalue = L.declare_function "setElem" setElem_t the_module in
 
   let indexList_t : L.lltype = L.function_type (L.pointer_type i8_t)
-    [| L.pointer_type struct_list_t ; i32_t |] in
+      [| L.pointer_type struct_list_t ; i32_t |] in
   let indexList : L.llvalue = L.declare_function "indexList" indexList_t the_module in
 
   let scrape_t : L.lltype = L.function_type (L.pointer_type struct_str_t) [| L.pointer_type struct_str_t |] in
@@ -163,32 +163,32 @@ let translate (globals, functions) =
         SLiteral i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SStrLit s   -> let a = L.build_malloc struct_str_t "_tmpstr" builder in
-                        let _ = L.build_call initStr [| a |] "" builder in
-                        let s' = L.const_stringz context s in
-                        let b = L.build_alloca (L.type_of s') "_tmpstr" builder in
-                        let _ = L.build_store s' b builder in
-                        let s'' = L.build_bitcast b (L.pointer_type i8_t) "" builder in
-                        let _ = L.build_call assignStr [| a ; s'' |] "" builder in
-                        a
+        let _ = L.build_call initStr [| a |] "" builder in
+        let s' = L.const_stringz context s in
+        let b = L.build_alloca (L.type_of s') "_tmpstr" builder in
+        let _ = L.build_store s' b builder in
+        let s'' = L.build_bitcast b (L.pointer_type i8_t) "" builder in
+        let _ = L.build_call assignStr [| a ; s'' |] "" builder in
+        a
       | SListLit ls -> let lp = L.build_malloc struct_list_t "_tmplst" builder in
-                        let _ = L.build_call initList [| lp |] "" builder in
-                        let _ = List.iter (fun s ->
-                            let s' = L.build_malloc (ltype_of_typ (fst s)) "_lstitem" builder
-                            in let _ = L.build_store (build_expr builder s) s' builder
-                            in let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
-                            in ignore(L.build_call appendList [| lp ; s'' |] "" builder);
-                        ) ls in
-                        lp
+        let _ = L.build_call initList [| lp |] "" builder in
+        let _ = List.iter (fun s ->
+            let s' = L.build_malloc (ltype_of_typ (fst s)) "_lstitem" builder
+            in let _ = L.build_store (build_expr builder s) s' builder
+            in let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
+            in ignore(L.build_call appendList [| lp ; s'' |] "" builder);
+          ) ls in
+        lp
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = build_expr builder e in ignore(L.build_store e' (lookup s) builder); e'
       | SIndex(le, i) -> let ls = build_expr builder le in
-                         let i' = build_expr builder i in
-                         let ep' = L.build_call indexList [| ls ; i' |] "" builder in
-                         let pt = match (fst le) with
-                           | A.List(lt) -> ltype_of_typ lt
-                           | _ -> i8_t in (*SHOULD NEVER HAPPEN*)
-                         let ep = L.build_bitcast ep' (L.pointer_type pt) "" builder in
-                         L.build_load ep "_ele" builder
+        let i' = build_expr builder i in
+        let ep' = L.build_call indexList [| ls ; i' |] "" builder in
+        let pt = match (fst le) with
+          | A.List(lt) -> ltype_of_typ lt
+          | _ -> i8_t in (*SHOULD NEVER HAPPEN*)
+        let ep = L.build_bitcast ep' (L.pointer_type pt) "" builder in
+        L.build_load ep "_ele" builder
       | SBinop (e1, op, e2) ->
         let e1' = build_expr builder e1
         and e2' = build_expr builder e2 in
@@ -210,47 +210,47 @@ let translate (globals, functions) =
       | SCall ("fprintStr", [f ; s ; a]) ->
         L.build_call fprintStr [| build_expr builder f ; build_expr builder s ; build_expr builder a |] "_fprintStr" builder
       | SCall ("strEq", [e1 ; e2]) ->
-         let e1' = build_expr builder e1 in
-         let e2' = build_expr builder e2 in
-         let i = L.build_call strEq [| e1' ; e2' |] "" builder in
-         L.build_icmp L.Icmp.Eq i (L.const_int i32_t 0) "" builder
+        let e1' = build_expr builder e1 in
+        let e2' = build_expr builder e2 in
+        let i = L.build_call strEq [| e1' ; e2' |] "" builder in
+        L.build_icmp L.Icmp.Eq i (L.const_int i32_t 0) "" builder
       | SCall ("freeStr", [(_, SId(s))]) -> 
-         let p = L.build_load (lookup s) "_str" builder in
-         let r = L.build_call freeStr [| p |] "" builder in
-         let _ = L.build_free p builder in r
+        let p = L.build_load (lookup s) "_str" builder in
+        let r = L.build_call freeStr [| p |] "" builder in
+        let _ = L.build_free p builder in r
       | SCall ("subStr", [start ; stop ; e]) ->
-         let e = build_expr builder e in
-         let start' = build_expr builder start in
-         let stop' = build_expr builder stop in
-         L.build_call subStr [| start' ; stop' ; e|] "" builder
+        let e = build_expr builder e in
+        let start' = build_expr builder start in
+        let stop' = build_expr builder stop in
+        L.build_call subStr [| start' ; stop' ; e|] "" builder
       | SCall ("concatStr", [e1 ; e2]) ->
-         let e1' = build_expr builder e1 in
-         let e2' = build_expr builder e2 in
-         L.build_call concatStr [| e1' ; e2' |] "c_ret" builder
+        let e1' = build_expr builder e1 in
+        let e2' = build_expr builder e2 in
+        L.build_call concatStr [| e1' ; e2' |] "c_ret" builder
       | SCall ("initList", [(_, SId(s))]) ->
-         let ls = L.build_malloc struct_list_t "" builder in
-         let _ = L.build_store ls (lookup s) builder in
-         L.build_call initList [| ls |] "" builder
+        let ls = L.build_malloc struct_list_t "" builder in
+        let _ = L.build_store ls (lookup s) builder in
+        L.build_call initList [| ls |] "" builder
       | SCall ("freeList", [(_, SId(s))]) ->
-         let p = L.build_load (lookup s) "" builder in
-         let r = L.build_call freeList [| p |] "" builder in
-         let _ = L.build_free p builder in r
+        let p = L.build_load (lookup s) "" builder in
+        let r = L.build_call freeList [| p |] "" builder in
+        let _ = L.build_free p builder in r
       | SCall ("listLen", [lexpr]) ->
         let lp = build_expr builder lexpr in
         L.build_call listLen [| lp |] "" builder
       | SCall ("appendList", [ls ; e]) ->
-          let ls' = build_expr builder ls in
-          let s' = L.build_malloc (ltype_of_typ (fst e)) "" builder
-          in let _ = L.build_store (build_expr builder e) s' builder in
-          let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
-          in L.build_call appendList [| ls' ; s'' |] "" builder
+        let ls' = build_expr builder ls in
+        let s' = L.build_malloc (ltype_of_typ (fst e)) "" builder
+        in let _ = L.build_store (build_expr builder e) s' builder in
+        let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
+        in L.build_call appendList [| ls' ; s'' |] "" builder
       | SCall ("setElem", [ls ; i ; e]) ->
-          let ls' = build_expr builder ls in
-          let i' = build_expr builder i in
-          let s' = L.build_malloc (ltype_of_typ (fst e)) "" builder
-          in let _ = L.build_store (build_expr builder e) s' builder in
-          let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
-          in L.build_call setElem [| ls' ; i' ; s'' |] "" builder
+        let ls' = build_expr builder ls in
+        let i' = build_expr builder i in
+        let s' = L.build_malloc (ltype_of_typ (fst e)) "" builder
+        in let _ = L.build_store (build_expr builder e) s' builder in
+        let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
+        in L.build_call setElem [| ls' ; i' ; s'' |] "" builder
       | SCall ("strLen", [exp]) ->
         let sp = build_expr builder exp in
         L.build_call strLen [| sp |] "" builder
@@ -347,8 +347,7 @@ let translate (globals, functions) =
         L.builder_at_end context end_bb
 
       | SFor (_,_,_) ->
-        (* This should actually never be possible but I want
-         * the warnings to go away *)
+        (* This should never be possible *)
         builder
 
     in

@@ -22,7 +22,6 @@ type sstmt =
   | SFor of sexpr * sexpr * sstmt
   | SReturn of sexpr
 
-(* func_def: ret_typ fname formals locals body *)
 type sfunc_def = {
   srtyp: typ;
   sfname: string;

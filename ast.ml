@@ -13,7 +13,6 @@ type expr =
   | Binop of expr * op * expr
   | Index of expr * expr
   | Assign of string * expr
-  (* function call *)
   | Call of string * expr list
 
 (* int x: name binding *)
@@ -25,10 +24,8 @@ type stmt =
   | If of expr * stmt * stmt
   | While of expr * stmt
   | For of expr * expr * stmt
-  (* return *)
   | Return of expr
 
-(* func_def: ret_typ fname formals locals body *)
 type func_def = {
   rtyp: typ;
   fname: string;

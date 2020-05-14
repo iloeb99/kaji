@@ -6,12 +6,17 @@ make
 
 ### Run the Kaji compiler and generate executable
 ```
-./kaji.native -l example.kaji
+./kaji.native example.kaji
 ```
 
 ### Run the executable
 ```
 ./a.out
+```
+
+### (Optional) Run the Kaji compiler and generate LLVM code
+```
+./kaji.native -l example.kaji
 ```
 
 ### Compiler files
