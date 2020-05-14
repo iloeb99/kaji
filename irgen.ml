@@ -243,6 +243,9 @@ let translate (globals, functions) =
       | SCall ("strLen", [exp]) ->
         let sp = build_expr builder exp in
         L.build_call strLen [| sp |] "" builder
+      | SCall ("scrape", [e]) ->
+        let e' = build_expr builder e in
+        L.build_call scrape [| e' |] "" builder
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in
