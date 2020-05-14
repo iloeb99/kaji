@@ -8,5 +8,3 @@ TODO
 	pattern matching gets weird), instead semant.ml should translate the
 	overloaded function into a differently named function that IRgen can call
 	and refer to more easily.
-
-- trim some of the fat I added being dumb (like copyStr)
