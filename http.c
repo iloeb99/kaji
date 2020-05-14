@@ -1,4 +1,3 @@
-#include "http.h"
 #include "str.h"
 
 #include <stdio.h>
@@ -54,6 +53,7 @@ struct str *get(struct str *url_struct)
     struct str *out;
 
 	url = url_struct->data;
+	out = (struct str *) malloc(sizeof(struct str));
     initStr(out);
 
     curl = curl_easy_init();

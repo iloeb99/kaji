@@ -1,7 +1,7 @@
 func int main() {
     str res;
 
-    res = scrape("verigu.github.io/4115Spring2020");
+    res = scrape("aryaman.me/home/");
 
     fprintStr("get_output.txt", res, 0);
 

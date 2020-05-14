@@ -106,7 +106,7 @@ let translate (globals, functions) =
   let indexList : L.llvalue = L.declare_function "indexList" indexList_t the_module in
 
   let scrape_t : L.lltype = L.function_type (L.pointer_type struct_str_t) [| L.pointer_type struct_str_t |] in
-  let scrape : L.llvalue = L.declare_function "scrape" scrape_t the_module in
+  let scrape : L.llvalue = L.declare_function "get" scrape_t the_module in
 
 
   (* Define each function (arguments and return type) so we can
