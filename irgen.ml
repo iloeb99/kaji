@@ -235,6 +235,9 @@ let translate (globals, functions) =
          let e1' = build_expr builder e1 in
          let e2' = build_expr builder e2 in
          L.build_call concatStr [| e1' ; e2' |] "c_ret" builder
+      | SCall ("initList", [e]) ->
+         let e' = build_expr builder e in
+         L.build_call initList [| e' |] "" builder
       | SCall ("freeList", [(_, SId(s))]) ->
         L.build_call freeList [| lookup s |] "" builder
       | SCall ("listLen", [lexpr]) ->
