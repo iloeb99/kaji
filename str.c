@@ -65,10 +65,10 @@ struct str *subStr(int start, int end, const struct str *s)
     int sublen = end - start;
     if (sublen > 0)
     {
-        sub->length = sublen;
-        sub->data = malloc(sublen + 1 * sizeof(char));
-        strncpy(sub->data, s->data + start, end - start);
-        sub->data[sublen] = '\0';
+        char subarr[sublen + 1];
+        strncpy(subarr, s->data+start, sublen);
+        subarr[sublen] = '\0';
+        sub = assignStr(sub, subarr);
     }
     return sub;
 }
