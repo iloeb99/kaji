@@ -89,6 +89,22 @@ let check (globals, functions) =
       fname = "scrape";
       formals = [(Str, "url")];
       locals = []; body = [] } built_in_decls
+  in let built_in_decls = 
+    StringMap.add "appendList" {
+      rtyp = Void;
+      fname = "appendList";
+      (* these formals are dummy values
+       * there's a special case in check_func *)
+      formals = [(Int, "i") ; (Int, "j")];
+      locals = []; body = [] } built_in_decls
+  in let built_in_decls = 
+    StringMap.add "setElem" {
+      rtyp = Void;
+      fname = "setElem";
+      (* these formals are dummy values
+       * there's a special case in check_func *)
+      formals = [(Int, "i") ; (Int, "j") ; (Int, "k")];
+      locals = []; body = [] } built_in_decls
   in
 
 
@@ -207,14 +223,23 @@ let check (globals, functions) =
         if List.length args != param_length then
           raise (Failure ("expecting " ^ string_of_int param_length ^
                           " arguments in " ^ string_of_expr call))
-        else let check_call (ft, _) e =
-               let (et, e') = check_expr e in
-               let err = "illegal argument found " ^ string_of_typ et ^
-                         " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-               in (check_assign ft et err, e')
-          in
-          let args' = List.map2 check_call fd.formals args
-          in (fd.rtyp, SCall(fname, args'))
+        else begin match fname with
+          | "appendList" -> let args' = List.map check_expr args in
+                            begin match args' with
+                              [(List(t), _) ; (t2, _)] when t = t2 -> (Void, SCall(fname, args'))
+                            | _ -> raise (Failure ("appendList() argument types do not match")) end
+          | "setElem" -> let args' = List.map check_expr args in
+                         begin match args' with
+                           [(List(t), _) ; (Int, _) ; (t2, _)] when t = t2 -> (Void, SCall(fname, args'))
+                         | _ -> raise (Failure ("setElem() argument types do not match")) end
+          | _ -> let check_call (ft, _) e =
+                      let (et, e') = check_expr e in
+                      let err = "illegal argument found " ^ string_of_typ et ^
+                                " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+                      in (check_assign ft et err, e')
+                 in
+                 let args' = List.map2 check_call fd.formals args
+                 in (fd.rtyp, SCall(fname, args')) end
     in
 
     let check_bool_expr e =
