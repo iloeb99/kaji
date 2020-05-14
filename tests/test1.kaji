@@ -1,0 +1,56 @@
+func list<str> getDocuments(list<str> urls) {
+	list<str> docs;
+	str u;
+	str d;
+
+	initList(docs);
+
+	for(u in urls) {
+		d = scrape(u);
+		appendList(docs, d);
+	}
+
+	freeStr(d);
+	freeStr(u);
+
+	return docs;
+}
+
+func int main() {
+	list<str> urls;
+	list<str> documents;
+	str u;
+	str d;
+	str html_open;
+	str html_close;
+	str new_html;
+
+	urls = ["quizlr.net/home/", "aryaman.me/home/", "http://www.columbia.edu/~fdc/sample.html"];
+	
+	for(u in urls) {
+		printStr(u);
+	}
+
+	documents = getDocuments(urls);
+
+	html_open = subStr(16,22,documents[1]);
+	html_close = subStr(212,219,documents[1]);
+
+	printStr(html_open);
+
+	if(strEq(html_close, "</html>")) {
+		printStr("html tag closed");
+	} else {}
+
+	new_html = concatStr(html_open, concatStr("<head><title>TEST</title></head>",html_close));
+	setElem(documents, 2, new_html);
+
+	printStr(documents[2]);
+
+	freeStr(html_close);
+	freeStr(html_open);
+	freeList(urls);
+	freeList(documents);
+
+	return 0;
+}
