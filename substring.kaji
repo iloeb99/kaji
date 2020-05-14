@@ -1,17 +1,20 @@
 func int main() {
     str s;
-    str t;
+    str t1;
+    str t2;
 
     s = "Hello World!";
-    
 	printStr(s);
 
-    subStr(0, 5, s, t);
-	
-	printStr(t);
+    t1 = subStr(0, 5, s);
+	printStr(t1);
+
+    t2 = subStr(0, 3, "Hi, I'm a string!");
+    printStr(t2);
 
     freeStr(s);
-    freeStr(t);
+    freeStr(t1);
+    freeStr(t2);
 
     print(1);
 
