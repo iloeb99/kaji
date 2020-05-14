@@ -81,7 +81,7 @@ let translate (globals, functions) =
 
   let strLen : L.llvalue = L.declare_function "listLen" printStr_t the_module in
 
-  let subStr_t : L.lltype = L.function_type void_t [| i32_t; i32_t; L.pointer_type struct_str_t ; L.pointer_type struct_str_t |] in
+  let subStr_t : L.lltype = L.function_type (L.pointer_type struct_str_t)[| i32_t; i32_t; L.pointer_type struct_str_t |] in
   let subStr : L.llvalue = L.declare_function "subStr" subStr_t the_module in
 
   let concatStr_t : L.lltype = L.function_type (L.pointer_type struct_str_t) 
@@ -220,14 +220,16 @@ let translate (globals, functions) =
          let p = L.build_load (lookup s) "_str" builder in
          let r = L.build_call freeStr [| p |] "" builder in
          let _ = L.build_free p builder in r
-      | SCall ("subStr", [start ; stop ; (_, SId(src)) ; (_, SId(dest))]) ->
+      (* | SCall ("subStr", [start ; stop ; (_, SId(src)) ; (_, SId(dest))]) ->
          let d = L.build_malloc struct_str_t "" builder in
          let _ = L.build_call initStr [| d |] "" builder in
          let _ = L.build_store d (lookup dest) builder in
-         let s = L.build_load (lookup src) "" builder in
+         let s = L.build_load (lookup src) "" builder in *)
+      | SCall ("subStr", [start ; stop ; e]) ->
+         let e = build_expr builder e1 in
          let start' = build_expr builder start in
          let stop' = build_expr builder stop in
-         L.build_call subStr [| start' ; stop' ; s ; d |] "" builder
+         L.build_call subStr [| start' ; stop' ; e|] "" builder
       | SCall ("concatStr", [e1 ; e2]) ->
          let e1' = build_expr builder e1 in
          let e2' = build_expr builder e2 in
