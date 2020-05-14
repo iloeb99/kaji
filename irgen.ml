@@ -43,8 +43,8 @@ let translate (globals, functions) =
       A.Int  -> i32_t
     | A.Bool -> i1_t
     | A.Void -> void_t
-    | A.Str  -> struct_str_t
-    | A.List(_) -> struct_list_t
+    | A.Str  -> L.pointer_type struct_str_t
+    | A.List(_) -> L.pointer_type struct_list_t
   in
 
   (* Create a map of global variables after creating each *)
@@ -118,8 +118,8 @@ let translate (globals, functions) =
     let function_decl m fdecl =
       let name = fdecl.sfname
       and formal_types =
-        Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
-      in let ftype = L.function_type (ltype_of_typ fdecl.srtyp) formal_types in
+        Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals) in
+      let ftype = L.function_type (ltype_of_typ fdecl.srtyp) formal_types in
       StringMap.add name (L.define_function name ftype the_module, fdecl) m in
     List.fold_left function_decl StringMap.empty functions in
 
@@ -143,9 +143,7 @@ let translate (globals, functions) =
       (* Allocate space for any locally declared variables and add the
        * resulting registers to our map *)
       and add_local m (t, n) =
-        let local_var = match t with
-            A.Str | A.List(_) -> L.build_alloca (L.pointer_type (ltype_of_typ t)) n builder
-          | _                 -> L.build_alloca (ltype_of_typ t) n builder
+        let local_var = L.build_alloca (ltype_of_typ t) n builder
         in StringMap.add n local_var m
       in
 
@@ -175,10 +173,7 @@ let translate (globals, functions) =
       | SListLit ls -> let lp = L.build_malloc struct_list_t "_tmplst" builder in
                         let _ = L.build_call initList [| lp |] "" builder in
                         let _ = List.iter (fun s ->
-                            let s' = match s with
-                            | (A.Str, _) -> L.build_malloc (L.pointer_type struct_str_t) "_lstitem" builder
-                            | (A.List(_), _) -> L.build_malloc (L.pointer_type struct_list_t) "_lstitem" builder
-                            | _ -> L.build_malloc (ltype_of_typ (fst s)) "_lstitem" builder
+                            let s' = L.build_malloc (ltype_of_typ (fst s)) "_lstitem" builder
                             in let _ = L.build_store (build_expr builder s) s' builder
                             in let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
                             in ignore(L.build_call appendList [| lp ; s'' |] "" builder);
@@ -190,10 +185,7 @@ let translate (globals, functions) =
                          let i' = build_expr builder i in
                          let ep' = L.build_call indexList [| ls ; i' |] "" builder in
                          let pt = match (fst le) with
-                           | A.List(lt) -> begin match lt with
-                             | A.List(_) | A.Str -> L.pointer_type (ltype_of_typ lt)
-                             | _ -> ltype_of_typ lt
-                             end
+                           | A.List(lt) -> ltype_of_typ lt
                            | _ -> i8_t in (*SHOULD NEVER HAPPEN*)
                          let ep = L.build_bitcast ep' (L.pointer_type pt) "" builder in
                          L.build_load ep "_ele" builder
@@ -245,20 +237,14 @@ let translate (globals, functions) =
         L.build_call listLen [| lp |] "" builder
       | SCall ("appendList", [ls ; e]) ->
           let ls' = build_expr builder ls in
-          let s' = match e with
-              | (A.Str, _) -> L.build_malloc (L.pointer_type struct_str_t) "" builder
-              | (A.List(_), _) -> L.build_malloc (L.pointer_type struct_list_t) "" builder
-              | _ -> L.build_malloc (ltype_of_typ (fst e)) "" builder
+          let s' = L.build_malloc (ltype_of_typ (fst e)) "" builder
           in let _ = L.build_store (build_expr builder e) s' builder in
           let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
           in L.build_call appendList [| ls' ; s'' |] "" builder
       | SCall ("setElem", [ls ; i ; e]) ->
           let ls' = build_expr builder ls in
           let i' = build_expr builder i in
-          let s' = match e with
-              | (A.Str, _) -> L.build_malloc (L.pointer_type struct_str_t) "" builder
-              | (A.List(_), _) -> L.build_malloc (L.pointer_type struct_list_t) "" builder
-              | _ -> L.build_malloc (ltype_of_typ (fst e)) "" builder
+          let s' = L.build_malloc (ltype_of_typ (fst e)) "" builder
           in let _ = L.build_store (build_expr builder e) s' builder in
           let s'' = L.build_bitcast s' (L.pointer_type i8_t) "" builder
           in L.build_call setElem [| ls' ; i' ; s'' |] "" builder
@@ -345,9 +331,7 @@ let translate (globals, functions) =
         let _ = L.build_cond_br bool_val end_bb for_body_bb for_cond_builder in
 
         let ep' = L.build_call indexList [| lp ; i_curr |] "" for_body_builder in
-        let pt = match lt with
-            | A.List(_) | A.Str -> L.pointer_type (ltype_of_typ lt)
-            | _ -> ltype_of_typ lt in
+        let pt = ltype_of_typ lt in
         let ep = L.build_bitcast ep' (L.pointer_type pt) "" for_body_builder in
         let ele_temp = L.build_load ep "_ele" for_body_builder in
         let _ = L.build_store ele_temp (lookup var) for_body_builder in
