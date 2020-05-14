@@ -54,12 +54,6 @@ let check (globals, functions) =
       formals = [(Str, "s")];
       locals = []; body = [] } built_in_decls
   in let built_in_decls =
-    StringMap.add "copyStr" {
-      rtyp = Void;
-      fname = "copyStr";
-      formals = [(Str, "dest") ; (Str, "src")];
-      locals = []; body = [] } built_in_decls
-  in let built_in_decls =
     StringMap.add "strLen" {
       rtyp = Int;
       fname = "strLen";
@@ -75,6 +69,12 @@ let check (globals, functions) =
     StringMap.add "strEq" {
       rtyp = Bool;
       fname = "strEq";
+      formals = [(Str, "s") ; (Str, "t")];
+      locals = []; body = [] } built_in_decls
+  in let built_in_decls =
+    StringMap.add "concatStr" {
+      rtyp = Str;
+      fname = "concatStr";
       formals = [(Str, "s") ; (Str, "t")];
       locals = []; body = [] } built_in_decls
   in let built_in_decls = 
